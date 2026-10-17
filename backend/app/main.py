@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.schemas import RouteRequest
-from app.places.catalog import PLACES, search_places, find_place
+from app.places.catalog import search_places, find_place, catalog_attribution
 from app.routing.graph import load_graph
 from app.routing.service import build_routes, GraphUnavailable, NoRoute
 from app.shade.model import load_model
@@ -14,8 +14,10 @@ def health():
     return {'status':'ok','dataset_status':'ready' if load_graph() else 'not_loaded','shade_status':'modeled' if load_model() else 'unavailable'}
 
 @app.get('/api/places')
-def places(q: str=Query(default='',max_length=100)):
-    return {'places':[{'id':p.id,'name':p.name,'coordinate':p.coordinate} for p in search_places(q)]}
+def places(q: str=Query(default='',max_length=100), limit: int=Query(default=8,ge=1,le=20)):
+    return {'places':[{'id':p.id,'name':p.name,'coordinate':p.coordinate,'category':p.category,'address':p.address}
+                      for p in search_places(q,limit)],
+            'attribution':catalog_attribution()}
 
 @app.post('/api/routes')
 def routes(body: RouteRequest):

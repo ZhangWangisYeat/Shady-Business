@@ -1,0 +1,4458 @@
+{
+ "metadata": {
+  "source": "OpenStreetMap features inside the UCLA campus boundary (Overpass API)",
+  "license": "ODbL-1.0",
+  "attribution": "© OpenStreetMap contributors",
+  "data_as_of": "2026-10-17",
+  "coordinate_note": "building/area centers; not verified entrance points"
+ },
+ "places": [
+  {
+   "id": "acacia-residential-building",
+   "name": "Acacia Residential Building",
+   "coordinate": [
+    -118.449759,
+    34.070399
+   ],
+   "category": "Housing",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ackerman-food-court",
+   "name": "Ackerman Food Court",
+   "coordinate": [
+    -118.444186,
+    34.070359
+   ],
+   "category": "Dining",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ackerman-union",
+   "name": "Ackerman Union",
+   "coordinate": [
+    -118.444283,
+    34.070396
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "acosta-center",
+   "name": "Acosta Center",
+   "coordinate": [
+    -118.447749,
+    34.07043
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ahmanson-lovelace-brain-mapping-center",
+   "name": "Ahmanson-Lovelace Brain Mapping Center",
+   "coordinate": [
+    -118.444374,
+    34.066691
+   ],
+   "category": "Health",
+   "address": "660 Charles E. Young Drive South",
+   "aliases": []
+  },
+  {
+   "id": "aloe-court",
+   "name": "Aloe Court",
+   "coordinate": [
+    -118.451277,
+    34.06349
+   ],
+   "category": "Housing",
+   "address": "740 Weyburn Terrace",
+   "aliases": []
+  },
+  {
+   "id": "ancient-forest",
+   "name": "Ancient Forest",
+   "coordinate": [
+    -118.440983,
+    34.065388
+   ],
+   "category": "Garden",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "anthropomorphic-echoes",
+   "name": "Anthropomorphic Echoes",
+   "coordinate": [
+    -118.441929,
+    34.067946
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "archery-practice-field",
+   "name": "Archery Practice Field",
+   "coordinate": [
+    -118.454624,
+    34.071446
+   ],
+   "category": "Athletics",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "artemis-of-ephesus",
+   "name": "Artemis of Ephesus",
+   "coordinate": [
+    -118.439367,
+    34.074995
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "arts-library",
+   "name": "Arts Library",
+   "coordinate": [
+    -118.439347,
+    34.074188
+   ],
+   "category": "Library",
+   "address": "337 Charles E. Young Drive, East",
+   "aliases": []
+  },
+  {
+   "id": "ashe-student-health-center",
+   "name": "Ashe Student Health Center",
+   "coordinate": [
+    -118.44482,
+    34.071544
+   ],
+   "category": "Health",
+   "address": "221 Westwood Plaza",
+   "aliases": []
+  },
+  {
+   "id": "au-bon-pain",
+   "name": "Au Bon Pain",
+   "coordinate": [
+    -118.443278,
+    34.065914
+   ],
+   "category": "Dining",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "automne-autumn",
+   "name": "Automne/Autumn",
+   "coordinate": [
+    -118.439731,
+    34.075237
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "bas-relief-i",
+   "name": "Bas Relief I",
+   "coordinate": [
+    -118.440875,
+    34.075679
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "bas-relief-ii",
+   "name": "Bas Relief II",
+   "coordinate": [
+    -118.440877,
+    34.075701
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "bas-relief-iii",
+   "name": "Bas Relief III",
+   "coordinate": [
+    -118.440877,
+    34.075719
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "bas-relief-iv",
+   "name": "Bas Relief IV",
+   "coordinate": [
+    -118.440879,
+    34.075737
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "bellagio-drive",
+   "name": "Bellagio Drive",
+   "coordinate": [
+    -118.454096,
+    34.07604
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "betsy-and-rafer-johnson-track",
+   "name": "Betsy & Rafer Johnson Track",
+   "coordinate": [
+    -118.448263,
+    34.071942
+   ],
+   "category": "Athletics",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "birch-residential-building",
+   "name": "Birch Residential Building",
+   "coordinate": [
+    -118.450605,
+    34.070398
+   ],
+   "category": "Housing",
+   "address": null,
+   "aliases": [
+    "De Neve Commons"
+   ]
+  },
+  {
+   "id": "birthplace-of-the-internet",
+   "name": "Birthplace of the Internet",
+   "coordinate": [
+    -118.442621,
+    34.068744
+   ],
+   "category": "Museum",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "blaze-pizza",
+   "name": "Blaze Pizza",
+   "coordinate": [
+    -118.442103,
+    34.068037
+   ],
+   "category": "Dining",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "boelter-hall",
+   "name": "Boelter Hall",
+   "coordinate": [
+    -118.442989,
+    34.068867
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "bomb-shelter",
+   "name": "Bomb Shelter",
+   "coordinate": [
+    -118.442104,
+    34.068106
+   ],
+   "category": "Dining",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "boyer-hall",
+   "name": "Boyer Hall",
+   "coordinate": [
+    -118.441765,
+    34.068104
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "bradley-international-hall",
+   "name": "Bradley International Hall",
+   "coordinate": [
+    -118.449433,
+    34.069562
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "brain-research-institute",
+   "name": "Brain Research Institute",
+   "coordinate": [
+    -118.444307,
+    34.066298
+   ],
+   "category": "Building",
+   "address": "670 Charles E. Young Drive South",
+   "aliases": []
+  },
+  {
+   "id": "briskin-family-plaza",
+   "name": "Briskin Family Plaza",
+   "coordinate": [
+    -118.442928,
+    34.07368
+   ],
+   "category": "Plaza",
+   "address": null,
+   "aliases": [
+    "Judy and Bernard Briskin Family Plaza"
+   ]
+  },
+  {
+   "id": "broad-art-center",
+   "name": "Broad Art Center",
+   "coordinate": [
+    -118.440988,
+    34.075902
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "bruin-bear",
+   "name": "Bruin Bear",
+   "coordinate": [
+    -118.445013,
+    34.070942
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "bruin-buzz",
+   "name": "Bruin Buzz",
+   "coordinate": [
+    -118.443967,
+    34.070187
+   ],
+   "category": "Café",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "bruin-cafe",
+   "name": "Bruin Cafe",
+   "coordinate": [
+    -118.450311,
+    34.072565
+   ],
+   "category": "Café",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "bruin-custom-print",
+   "name": "Bruin Custom Print",
+   "coordinate": [
+    -118.444098,
+    34.070253
+   ],
+   "category": "Shop",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "bruin-health-pharmacy",
+   "name": "Bruin Health Pharmacy",
+   "coordinate": [
+    -118.444539,
+    34.070624
+   ],
+   "category": "Health",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "bruin-plate",
+   "name": "Bruin Plate",
+   "coordinate": [
+    -118.449814,
+    34.071787
+   ],
+   "category": "Dining",
+   "address": null,
+   "aliases": [
+    "bplate"
+   ]
+  },
+  {
+   "id": "bruin-plaza",
+   "name": "Bruin Plaza",
+   "coordinate": [
+    -118.44477,
+    34.070983
+   ],
+   "category": "Plaza",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "bruin-walk",
+   "name": "Bruin Walk",
+   "coordinate": [
+    -118.446387,
+    34.070856
+   ],
+   "category": "Plaza",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "bruins-esports-and-gaming-lounge",
+   "name": "Bruins Esports & Gaming Lounge",
+   "coordinate": [
+    -118.444178,
+    34.070433
+   ],
+   "category": "Place",
+   "address": "308 Westwood Plaza",
+   "aliases": []
+  },
+  {
+   "id": "bunche-hall",
+   "name": "Bunche Hall",
+   "coordinate": [
+    -118.440426,
+    34.074287
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "button-flower",
+   "name": "Button Flower",
+   "coordinate": [
+    -118.439926,
+    34.074871
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "cafe-1919",
+   "name": "Cafe 1919",
+   "coordinate": [
+    -118.450815,
+    34.072686
+   ],
+   "category": "Dining",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "cafe-451",
+   "name": "Cafe 451",
+   "coordinate": [
+    -118.441283,
+    34.07485
+   ],
+   "category": "Café",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "cafe-med",
+   "name": "Cafe Med",
+   "coordinate": [
+    -118.443299,
+    34.065914
+   ],
+   "category": "Café",
+   "address": "Camden Avenue",
+   "aliases": []
+  },
+  {
+   "id": "cafe-synapse",
+   "name": "Cafe Synapse",
+   "coordinate": [
+    -118.444664,
+    34.067185
+   ],
+   "category": "Café",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "california-nanosystems-institute",
+   "name": "California Nanosystems Institute",
+   "coordinate": [
+    -118.442962,
+    34.068049
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "california-natives",
+   "name": "California Natives",
+   "coordinate": [
+    -118.440597,
+    34.066409
+   ],
+   "category": "Garden",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "campbell-hall",
+   "name": "Campbell Hall",
+   "coordinate": [
+    -118.441342,
+    34.073859
+   ],
+   "category": "Building",
+   "address": "335 Portola Plaza",
+   "aliases": []
+  },
+  {
+   "id": "campus-pharmacy",
+   "name": "Campus Pharmacy",
+   "coordinate": [
+    -118.445912,
+    34.065642
+   ],
+   "category": "Health",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "campus-pharmacy-and-home-health-center",
+   "name": "Campus Pharmacy & Home Health Center",
+   "coordinate": [
+    -118.445724,
+    34.065763
+   ],
+   "category": "Health",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "campus-services-building-1",
+   "name": "Campus Services Building 1",
+   "coordinate": [
+    -118.447557,
+    34.067591
+   ],
+   "category": "Building",
+   "address": "741 Charles E. Young Drive South",
+   "aliases": []
+  },
+  {
+   "id": "canyon-point",
+   "name": "Canyon Point",
+   "coordinate": [
+    -118.450852,
+    34.073678
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "capital-programs-building",
+   "name": "Capital Programs Building",
+   "coordinate": [
+    -118.44848,
+    34.060212
+   ],
+   "category": "Building",
+   "address": "1060 Veteran Avenue",
+   "aliases": []
+  },
+  {
+   "id": "carl-s-jr",
+   "name": "Carl's Jr.",
+   "coordinate": [
+    -118.443968,
+    34.070074
+   ],
+   "category": "Dining",
+   "address": "308 Westwood Plaza",
+   "aliases": []
+  },
+  {
+   "id": "cedar-residential-building",
+   "name": "Cedar Residential Building",
+   "coordinate": [
+    -118.449866,
+    34.07097
+   ],
+   "category": "Housing",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "centennial-hall",
+   "name": "Centennial Hall",
+   "coordinate": [
+    -118.453865,
+    34.072936
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "center-for-health-sciences",
+   "name": "Center for Health Sciences",
+   "coordinate": [
+    -118.44309,
+    34.066216
+   ],
+   "category": "Health",
+   "address": "10833 Le Conte Avenue",
+   "aliases": [
+    "David Geffen School of Medicine"
+   ]
+  },
+  {
+   "id": "central-ticket-office",
+   "name": "Central Ticket Office",
+   "coordinate": [
+    -118.445612,
+    34.070174
+   ],
+   "category": "Shop",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "charles-e-young-drive-east",
+   "name": "Charles E Young Drive East",
+   "coordinate": [
+    -118.439642,
+    34.072205
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": [
+    "Buenos Aires Drive South"
+   ]
+  },
+  {
+   "id": "charles-e-young-drive-south",
+   "name": "Charles E Young Drive South",
+   "coordinate": [
+    -118.442223,
+    34.067017
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": [
+    "Buenos Aires Drive South"
+   ]
+  },
+  {
+   "id": "charles-e-young-drive-east-2",
+   "name": "Charles E. Young Drive East",
+   "coordinate": [
+    -118.438725,
+    34.072238
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": [
+    "Buenos Aires Drive South"
+   ]
+  },
+  {
+   "id": "charles-e-young-drive-north",
+   "name": "Charles E. Young Drive North",
+   "coordinate": [
+    -118.443957,
+    34.075149
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "charles-e-young-drive-south-2",
+   "name": "Charles E. Young Drive South",
+   "coordinate": [
+    -118.444462,
+    34.066999
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": [
+    "Buenos Aires Drive South"
+   ]
+  },
+  {
+   "id": "charles-e-young-drive-west",
+   "name": "Charles E. Young Drive West",
+   "coordinate": [
+    -118.448303,
+    34.068243
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "charles-e-young-research-library",
+   "name": "Charles E. Young Research Library",
+   "coordinate": [
+    -118.44149,
+    34.074913
+   ],
+   "category": "Library",
+   "address": "280 Charles E. Young Drive North",
+   "aliases": [
+    "Young Research Library"
+   ]
+  },
+  {
+   "id": "clarkia",
+   "name": "Clarkia",
+   "coordinate": [
+    -118.441563,
+    34.065775
+   ],
+   "category": "Garden",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "climate-adapted-garden",
+   "name": "Climate-Adapted Garden",
+   "coordinate": [
+    -118.441182,
+    34.064585
+   ],
+   "category": "Garden",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "clinical-research",
+   "name": "Clinical Research",
+   "coordinate": [
+    -118.442044,
+    34.066031
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "collins-executive-education-center",
+   "name": "Collins Executive Education Center",
+   "coordinate": [
+    -118.44445,
+    34.073525
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "conifers",
+   "name": "Conifers",
+   "coordinate": [
+    -118.441212,
+    34.065049
+   ],
+   "category": "Garden",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "coral-tree-walk",
+   "name": "Coral Tree Walk",
+   "coordinate": [
+    -118.439859,
+    34.075462
+   ],
+   "category": "Walkway",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "cornell-hall",
+   "name": "Cornell Hall",
+   "coordinate": [
+    -118.443416,
+    34.073972
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "court-of-sciences",
+   "name": "Court of Sciences",
+   "coordinate": [
+    -118.442239,
+    34.068481
+   ],
+   "category": "Plaza",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "court-of-sciences-store",
+   "name": "Court of Sciences Store",
+   "coordinate": [
+    -118.442214,
+    34.068379
+   ],
+   "category": "Shop",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "court-of-sciences-student-center",
+   "name": "Court of Sciences Student Center",
+   "coordinate": [
+    -118.442221,
+    34.068207
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": [
+    "Bombshelter"
+   ]
+  },
+  {
+   "id": "courtside",
+   "name": "Courtside",
+   "coordinate": [
+    -118.449855,
+    34.073665
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "covel-commons-sunset-village",
+   "name": "Covel Commons (Sunset Village)",
+   "coordinate": [
+    -118.44996,
+    34.073014
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "covel-dining-hall",
+   "name": "Covel Dining Hall",
+   "coordinate": [
+    -118.450097,
+    34.072938
+   ],
+   "category": "Dining",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "covel-steps",
+   "name": "Covel Steps",
+   "coordinate": [
+    -118.45024,
+    34.072783
+   ],
+   "category": "Stairs",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "cubi-xx",
+   "name": "Cubi XX",
+   "coordinate": [
+    -118.440008,
+    34.075148
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "cypress-court",
+   "name": "Cypress Court",
+   "coordinate": [
+    -118.452015,
+    34.063299
+   ],
+   "category": "Housing",
+   "address": "725 Weyburn Terrace",
+   "aliases": []
+  },
+  {
+   "id": "de-neve-commons-building",
+   "name": "De Neve Commons Building",
+   "coordinate": [
+    -118.450182,
+    34.070352
+   ],
+   "category": "Housing",
+   "address": null,
+   "aliases": [
+    "De Neve Commons"
+   ]
+  },
+  {
+   "id": "de-neve-dining-hall",
+   "name": "De Neve Dining Hall",
+   "coordinate": [
+    -118.450266,
+    34.070484
+   ],
+   "category": "Dining",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "de-neve-drive",
+   "name": "De Neve Drive",
+   "coordinate": [
+    -118.451318,
+    34.074502
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "de-neve-plaza",
+   "name": "De Neve Plaza",
+   "coordinate": [
+    -118.450189,
+    34.070772
+   ],
+   "category": "Plaza",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "delta-terrace",
+   "name": "Delta Terrace",
+   "coordinate": [
+    -118.451104,
+    34.073236
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "desert-collection",
+   "name": "Desert Collection",
+   "coordinate": [
+    -118.440236,
+    34.065776
+   ],
+   "category": "Garden",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "dickson-court",
+   "name": "Dickson Court",
+   "coordinate": [
+    -118.440828,
+    34.072203
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "dickson-court-bridge",
+   "name": "Dickson Court Bridge",
+   "coordinate": [
+    -118.440174,
+    34.072167
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "dickson-court-north",
+   "name": "Dickson Court North",
+   "coordinate": [
+    -118.440208,
+    34.072662
+   ],
+   "category": "Plaza",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "dickson-court-south",
+   "name": "Dickson Court South",
+   "coordinate": [
+    -118.440204,
+    34.07174
+   ],
+   "category": "Plaza",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "dickson-plaza",
+   "name": "Dickson Plaza",
+   "coordinate": [
+    -118.441727,
+    34.072199
+   ],
+   "category": "Plaza",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "dining-commons",
+   "name": "Dining Commons",
+   "coordinate": [
+    -118.446567,
+    34.066064
+   ],
+   "category": "Dining",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "dodd-hall",
+   "name": "Dodd Hall",
+   "coordinate": [
+    -118.439262,
+    34.072788
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "dogwood-residential-building",
+   "name": "Dogwood Residential Building",
+   "coordinate": [
+    -118.450497,
+    34.070968
+   ],
+   "category": "Housing",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "doris-stein-eye-research-center",
+   "name": "Doris Stein Eye Research Center",
+   "coordinate": [
+    -118.444572,
+    34.064518
+   ],
+   "category": "Building",
+   "address": "200 Stein Plaza",
+   "aliases": [
+    "Doris Stein Building"
+   ]
+  },
+  {
+   "id": "drake-stadium",
+   "name": "Drake Stadium",
+   "coordinate": [
+    -118.448535,
+    34.071972
+   ],
+   "category": "Athletics",
+   "address": null,
+   "aliases": [
+    "Elvin C. Drake Stadium"
+   ]
+  },
+  {
+   "id": "duke-ellington-memorial",
+   "name": "Duke Ellington Memorial",
+   "coordinate": [
+    -118.440643,
+    34.071244
+   ],
+   "category": "Landmark",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "dykstra-hall",
+   "name": "Dykstra Hall",
+   "coordinate": [
+    -118.450072,
+    34.070023
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "easton-circle",
+   "name": "Easton Circle",
+   "coordinate": [
+    -118.45086,
+    34.075092
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "easton-softball-stadium",
+   "name": "Easton Softball Stadium",
+   "coordinate": [
+    -118.453359,
+    34.076247
+   ],
+   "category": "Athletics",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "edwin-w-pauley-pavilion",
+   "name": "Edwin W. Pauley Pavilion",
+   "coordinate": [
+    -118.446769,
+    34.07038
+   ],
+   "category": "Athletics",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "engineering-iv",
+   "name": "Engineering IV",
+   "coordinate": [
+    -118.443996,
+    34.068776
+   ],
+   "category": "Building",
+   "address": "420 Westwood Plaza",
+   "aliases": [
+    "Eng IV"
+   ]
+  },
+  {
+   "id": "engineering-v",
+   "name": "Engineering V",
+   "coordinate": [
+    -118.443753,
+    34.069499
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": [
+    "Eng V"
+   ]
+  },
+  {
+   "id": "engineering-vi",
+   "name": "Engineering VI",
+   "coordinate": [
+    -118.444332,
+    34.069477
+   ],
+   "category": "Building",
+   "address": "404 Westwood Plaza",
+   "aliases": [
+    "Eng VI"
+   ]
+  },
+  {
+   "id": "entrepreneurs-hall",
+   "name": "Entrepreneurs Hall",
+   "coordinate": [
+    -118.443368,
+    34.07364
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "environment-health-and-safety",
+   "name": "Environment, Health & Safety",
+   "coordinate": [
+    -118.448247,
+    34.068298
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "evelyn-and-mo-ostin-music-cafe",
+   "name": "Evelyn & Mo Ostin Music Cafe",
+   "coordinate": [
+    -118.440549,
+    34.070278
+   ],
+   "category": "Café",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "evergreen-residential-building",
+   "name": "Evergreen Residential Building",
+   "coordinate": [
+    -118.451258,
+    34.070684
+   ],
+   "category": "Housing",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "experimental-digital-arts",
+   "name": "Experimental Digital Arts",
+   "coordinate": [
+    -118.440845,
+    34.075949
+   ],
+   "category": "Museum",
+   "address": "240 Charles E. Young Drive North",
+   "aliases": [
+    "EDA"
+   ]
+  },
+  {
+   "id": "factor-health-sciences-building",
+   "name": "Factor Health Sciences Building",
+   "coordinate": [
+    -118.442022,
+    34.066755
+   ],
+   "category": "Building",
+   "address": "700 Tiverton Avenue",
+   "aliases": [
+    "Doris and Louis Factor Health Sciences Building"
+   ]
+  },
+  {
+   "id": "faculty-center",
+   "name": "Faculty Center",
+   "coordinate": [
+    -118.439246,
+    34.070348
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "family-pool",
+   "name": "Family Pool",
+   "coordinate": [
+    -118.452186,
+    34.074582
+   ],
+   "category": "Athletics",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "fernald-center",
+   "name": "Fernald Center",
+   "coordinate": [
+    -118.443786,
+    34.076428
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "firgrove-residential-building",
+   "name": "Firgrove Residential Building",
+   "coordinate": [
+    -118.451024,
+    34.070163
+   ],
+   "category": "Housing",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "founders-rock",
+   "name": "Founders' Rock",
+   "coordinate": [
+    -118.437959,
+    34.072101
+   ],
+   "category": "Landmark",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "fowler-museum",
+   "name": "Fowler Museum",
+   "coordinate": [
+    -118.443232,
+    34.072955
+   ],
+   "category": "Museum",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "franklin-murphy",
+   "name": "Franklin Murphy",
+   "coordinate": [
+    -118.439813,
+    34.074715
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "franz-hall",
+   "name": "Franz Hall",
+   "coordinate": [
+    -118.441462,
+    34.06962
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "freya",
+   "name": "Freya",
+   "coordinate": [
+    -118.440306,
+    34.075288
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "gallas-rock",
+   "name": "Gallas Rock",
+   "coordinate": [
+    -118.44097,
+    34.075316
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "gardenia-residential-building",
+   "name": "Gardenia Residential Building",
+   "coordinate": [
+    -118.452381,
+    34.070753
+   ],
+   "category": "Housing",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "gayley-center",
+   "name": "Gayley Center",
+   "coordinate": [
+    -118.446389,
+    34.059595
+   ],
+   "category": "Building",
+   "address": "1145 Gayley Avenue",
+   "aliases": []
+  },
+  {
+   "id": "gayley-heights",
+   "name": "Gayley Heights",
+   "coordinate": [
+    -118.448829,
+    34.063964
+   ],
+   "category": "Housing",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "geffen-academy",
+   "name": "Geffen Academy",
+   "coordinate": [
+    -118.446826,
+    34.05935
+   ],
+   "category": "Building",
+   "address": "11000 Kinross Avenue",
+   "aliases": []
+  },
+  {
+   "id": "geffen-hall",
+   "name": "Geffen Hall",
+   "coordinate": [
+    -118.442235,
+    34.064524
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "geology",
+   "name": "Geology",
+   "coordinate": [
+    -118.441226,
+    34.069244
+   ],
+   "category": "Office",
+   "address": "595 Charles E Young Drive East",
+   "aliases": []
+  },
+  {
+   "id": "gold-hall",
+   "name": "Gold Hall",
+   "coordinate": [
+    -118.443881,
+    34.073639
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "gonda-goldschmeid-center",
+   "name": "Gonda (Goldschmeid) Center",
+   "coordinate": [
+    -118.444742,
+    34.067358
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": [
+    "Gonda Building"
+   ]
+  },
+  {
+   "id": "gseis",
+   "name": "GSEIS",
+   "coordinate": [
+    -118.442154,
+    34.07507
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "haines-hall",
+   "name": "Haines Hall",
+   "coordinate": [
+    -118.441279,
+    34.072898
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "hawaiian-plants",
+   "name": "Hawaiian Plants",
+   "coordinate": [
+    -118.441568,
+    34.065051
+   ],
+   "category": "Garden",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "hedrick-court",
+   "name": "Hedrick Court",
+   "coordinate": [
+    -118.452915,
+    34.073448
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "hedrick-hall",
+   "name": "Hedrick Hall",
+   "coordinate": [
+    -118.452411,
+    34.07329
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "hedrick-summit",
+   "name": "Hedrick Summit",
+   "coordinate": [
+    -118.452575,
+    34.073985
+   ],
+   "category": "Housing",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "heroic-head",
+   "name": "Heroic Head",
+   "coordinate": [
+    -118.44067,
+    34.075266
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "hershey-hall",
+   "name": "Hershey Hall",
+   "coordinate": [
+    -118.43991,
+    34.066881
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "hitch-residential-suites",
+   "name": "Hitch Residential Suites",
+   "coordinate": [
+    -118.45386,
+    34.073618
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "holly-residential-building",
+   "name": "Holly Residential Building",
+   "coordinate": [
+    -118.451803,
+    34.070957
+   ],
+   "category": "Housing",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "hugh-and-hazel-darling-law-library",
+   "name": "Hugh & Hazel Darling Law Library",
+   "coordinate": [
+    -118.43826,
+    34.072651
+   ],
+   "category": "Library",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "institute-for-pure-and-applied-mathematics",
+   "name": "Institute for Pure and Applied Mathematics",
+   "coordinate": [
+    -118.441867,
+    34.070264
+   ],
+   "category": "Building",
+   "address": "460 Portola Plaza",
+   "aliases": [
+    "IPAM",
+    "Portola Plaza Building"
+   ]
+  },
+  {
+   "id": "intramural-field",
+   "name": "Intramural Field",
+   "coordinate": [
+    -118.446898,
+    34.072102
+   ],
+   "category": "Athletics",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "inverted-fountain",
+   "name": "Inverted Fountain",
+   "coordinate": [
+    -118.440779,
+    34.070076
+   ],
+   "category": "Landmark",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "irma-and-norman-switzer-plaza",
+   "name": "Irma and Norman Switzer Plaza",
+   "coordinate": [
+    -118.443145,
+    34.065098
+   ],
+   "category": "Plaza",
+   "address": null,
+   "aliases": [
+    "Health Sciences Plaza"
+   ]
+  },
+  {
+   "id": "jacaranda-court",
+   "name": "Jacaranda Court",
+   "coordinate": [
+    -118.451476,
+    34.062792
+   ],
+   "category": "Housing",
+   "address": "785 Weyburn Terrace",
+   "aliases": []
+  },
+  {
+   "id": "jackie-robinson-memorial",
+   "name": "Jackie Robinson Memorial",
+   "coordinate": [
+    -118.445207,
+    34.071075
+   ],
+   "category": "Landmark",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "james-bridges-theater",
+   "name": "James Bridges Theater",
+   "coordinate": [
+    -118.440265,
+    34.076091
+   ],
+   "category": "Venue",
+   "address": "235 Charles E. Young Drive East",
+   "aliases": []
+  },
+  {
+   "id": "janss-steps",
+   "name": "Janss Steps",
+   "coordinate": [
+    -118.443108,
+    34.072196
+   ],
+   "category": "Stairs",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "jd-morgan-center",
+   "name": "JD Morgan Center",
+   "coordinate": [
+    -118.44552,
+    34.070779
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "jimmy-s-coffee-house",
+   "name": "Jimmy's Coffee House",
+   "coordinate": [
+    -118.439435,
+    34.073709
+   ],
+   "category": "Café",
+   "address": "398 Portola Plaza",
+   "aliases": []
+  },
+  {
+   "id": "john-r-wooden",
+   "name": "John R. Wooden",
+   "coordinate": [
+    -118.446424,
+    34.070907
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "john-wooden-center",
+   "name": "John Wooden Center",
+   "coordinate": [
+    -118.445373,
+    34.071562
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "jules-stein-eye-institute",
+   "name": "Jules Stein Eye Institute",
+   "coordinate": [
+    -118.443852,
+    34.064963
+   ],
+   "category": "Health",
+   "address": "100 Stein Plaza",
+   "aliases": [
+    "Jules Stein Building"
+   ]
+  },
+  {
+   "id": "jules-stein-parking",
+   "name": "Jules Stein Parking",
+   "coordinate": [
+    -118.444577,
+    34.064231
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "kaplan-hall",
+   "name": "Kaplan Hall",
+   "coordinate": [
+    -118.441251,
+    34.071464
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": [
+    "Humanities Building"
+   ]
+  },
+  {
+   "id": "kaufman-hall",
+   "name": "Kaufman Hall",
+   "coordinate": [
+    -118.444076,
+    34.072771
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "kerckhoff-coffee-house",
+   "name": "Kerckhoff Coffee House",
+   "coordinate": [
+    -118.443378,
+    34.070569
+   ],
+   "category": "Café",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "kerckhoff-hall",
+   "name": "Kerckhoff Hall",
+   "coordinate": [
+    -118.443538,
+    34.070438
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "kikka-sushi",
+   "name": "Kikka Sushi",
+   "coordinate": [
+    -118.444094,
+    34.07034
+   ],
+   "category": "Dining",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "kinross-avenue",
+   "name": "Kinross Avenue",
+   "coordinate": [
+    -118.44795,
+    34.059373
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "kinross-recreation-center",
+   "name": "Kinross Recreation Center",
+   "coordinate": [
+    -118.448153,
+    34.0589
+   ],
+   "category": "Building",
+   "address": "11100 Kinross Avenue",
+   "aliases": []
+  },
+  {
+   "id": "kinross-south",
+   "name": "Kinross South",
+   "coordinate": [
+    -118.446407,
+    34.05873
+   ],
+   "category": "Building",
+   "address": "11020 Kinross Avenue",
+   "aliases": []
+  },
+  {
+   "id": "kinsey-teaching-pavilion",
+   "name": "Kinsey Teaching Pavilion",
+   "coordinate": [
+    -118.441299,
+    34.070154
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "knudsen-hall",
+   "name": "Knudsen Hall",
+   "coordinate": [
+    -118.441297,
+    34.070569
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "krieger-a",
+   "name": "Krieger A",
+   "coordinate": [
+    -118.455064,
+    34.07512
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "krieger-c",
+   "name": "Krieger C",
+   "coordinate": [
+    -118.454878,
+    34.075639
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "krieger-c-krieger-b",
+   "name": "Krieger C / Krieger B",
+   "coordinate": [
+    -118.455112,
+    34.075547
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "krieger-d",
+   "name": "Krieger D",
+   "coordinate": [
+    -118.455146,
+    34.07574
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "la-chambre-a-coucher-de-l-empereur",
+   "name": "La Chambre a coucher de l'Empereur",
+   "coordinate": [
+    -118.439885,
+    34.075359
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "la-kretz-botany-building",
+   "name": "La Kretz Botany Building",
+   "coordinate": [
+    -118.441138,
+    34.066787
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "la-kretz-garden-pavillion",
+   "name": "La Kretz Garden Pavillion",
+   "coordinate": [
+    -118.44153,
+    34.066746
+   ],
+   "category": "Building",
+   "address": "707 Tiverton Drive",
+   "aliases": []
+  },
+  {
+   "id": "la-kretz-hall",
+   "name": "La Kretz Hall",
+   "coordinate": [
+    -118.442709,
+    34.067558
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "lazy-daisy",
+   "name": "Lazy Daisy",
+   "coordinate": [
+    -118.446576,
+    34.059985
+   ],
+   "category": "Café",
+   "address": "1101 Gayley Avenue",
+   "aliases": []
+  },
+  {
+   "id": "life-sciences-building",
+   "name": "Life Sciences Building",
+   "coordinate": [
+    -118.442461,
+    34.067138
+   ],
+   "category": "Building",
+   "address": "621 Charles E. Young Drive South",
+   "aliases": []
+  },
+  {
+   "id": "lollicup",
+   "name": "Lollicup",
+   "coordinate": [
+    -118.444093,
+    34.070511
+   ],
+   "category": "Café",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "los-angeles-tennis-center",
+   "name": "Los Angeles Tennis Center",
+   "coordinate": [
+    -118.448476,
+    34.070133
+   ],
+   "category": "Athletics",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "lot-35",
+   "name": "Lot 35",
+   "coordinate": [
+    -118.444393,
+    34.057817
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "lu-valle-eateries",
+   "name": "Lu Valle Eateries",
+   "coordinate": [
+    -118.43923,
+    34.07356
+   ],
+   "category": "Café",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "luskin-conference-center",
+   "name": "Luskin Conference Center",
+   "coordinate": [
+    -118.44576,
+    34.069301
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "luvalle-commons",
+   "name": "LuValle Commons",
+   "coordinate": [
+    -118.43927,
+    34.073653
+   ],
+   "category": "Dining",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "macdonald-medical-research-laboratory",
+   "name": "MacDonald Medical Research Laboratory",
+   "coordinate": [
+    -118.444118,
+    34.06739
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "macgowan-east",
+   "name": "Macgowan East",
+   "coordinate": [
+    -118.439313,
+    34.076108
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "macgowan-hall",
+   "name": "MacGowan Hall",
+   "coordinate": [
+    -118.439897,
+    34.075885
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "macgowan-hall-turnaround",
+   "name": "Macgowan Hall Turnaround",
+   "coordinate": [
+    -118.439143,
+    34.075952
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "magnolia-court",
+   "name": "Magnolia Court",
+   "coordinate": [
+    -118.450573,
+    34.063677
+   ],
+   "category": "Housing",
+   "address": "765 Weyburn Place",
+   "aliases": []
+  },
+  {
+   "id": "maja",
+   "name": "Maja",
+   "coordinate": [
+    -118.440117,
+    34.075011
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "manning-drive",
+   "name": "Manning Drive",
+   "coordinate": [
+    -118.439764,
+    34.067577
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "marion-davies-children-s-health-center",
+   "name": "Marion Davies Children's Health Center",
+   "coordinate": [
+    -118.442435,
+    34.06521
+   ],
+   "category": "Health",
+   "address": null,
+   "aliases": [
+    "Marion Davies Children's Center"
+   ]
+  },
+  {
+   "id": "marshall-field",
+   "name": "Marshall Field",
+   "coordinate": [
+    -118.448266,
+    34.071987
+   ],
+   "category": "Athletics",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "martha-s-garden",
+   "name": "Martha's Garden",
+   "coordinate": [
+    -118.450603,
+    34.072834
+   ],
+   "category": "Garden",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "math-sciences",
+   "name": "Math Sciences",
+   "coordinate": [
+    -118.442818,
+    34.069544
+   ],
+   "category": "Building",
+   "address": "520 Portola Plaza",
+   "aliases": []
+  },
+  {
+   "id": "mattel-children-s-hospital",
+   "name": "Mattel Children's Hospital",
+   "coordinate": [
+    -118.447112,
+    34.066327
+   ],
+   "category": "Health",
+   "address": "757 Westwood Plaza",
+   "aliases": []
+  },
+  {
+   "id": "medical-plaza-driveway",
+   "name": "Medical Plaza Driveway",
+   "coordinate": [
+    -118.445823,
+    34.065085
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "mediterranean-ecosystem-collection",
+   "name": "Mediterranean Ecosystem Collection",
+   "coordinate": [
+    -118.44043,
+    34.065489
+   ],
+   "category": "Garden",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "melnitz-east",
+   "name": "Melnitz East",
+   "coordinate": [
+    -118.439375,
+    34.076421
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "melnitz-hall",
+   "name": "Melnitz Hall",
+   "coordinate": [
+    -118.440002,
+    34.076311
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "mere-ubu",
+   "name": "Mere Ubu",
+   "coordinate": [
+    -118.439451,
+    34.075526
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "metro-bike-share",
+   "name": "Metro Bike Share",
+   "coordinate": [
+    -118.449443,
+    34.072569
+   ],
+   "category": "Place",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "metro-bike-share-gateway-plaza",
+   "name": "Metro Bike Share Gateway Plaza",
+   "coordinate": [
+    -118.445352,
+    34.069742
+   ],
+   "category": "Place",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "metro-bike-share-weyburn",
+   "name": "Metro Bike Share Weyburn",
+   "coordinate": [
+    -118.450032,
+    34.061865
+   ],
+   "category": "Place",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "mildred-e-mathias-botanical-garden",
+   "name": "Mildred E. Mathias Botanical Garden",
+   "coordinate": [
+    -118.441035,
+    34.065476
+   ],
+   "category": "Garden",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "mo-ostin-basketball-center",
+   "name": "Mo Ostin Basketball Center",
+   "coordinate": [
+    -118.448243,
+    34.069385
+   ],
+   "category": "Building",
+   "address": "440 Charles E Young Drive West",
+   "aliases": []
+  },
+  {
+   "id": "molecular-sciences",
+   "name": "Molecular Sciences",
+   "coordinate": [
+    -118.440899,
+    34.068159
+   ],
+   "category": "Office",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "moore-hall",
+   "name": "Moore Hall",
+   "coordinate": [
+    -118.442729,
+    34.070423
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "mother-and-child",
+   "name": "Mother And Child",
+   "coordinate": [
+    -118.439663,
+    34.074789
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "mother-with-child-at-her-hip",
+   "name": "Mother With Child At Her Hip",
+   "coordinate": [
+    -118.439636,
+    34.075526
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "mulier",
+   "name": "Mulier",
+   "coordinate": [
+    -118.441505,
+    34.074542
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "mullin-management-commons",
+   "name": "Mullin Management Commons",
+   "coordinate": [
+    -118.443841,
+    34.074025
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "murphy-hall",
+   "name": "Murphy Hall",
+   "coordinate": [
+    -118.438721,
+    34.071546
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "murphy-sculpture-garden",
+   "name": "Murphy Sculpture Garden",
+   "coordinate": [
+    -118.440065,
+    34.074995
+   ],
+   "category": "Plaza",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "nell-and-john-wooden-court",
+   "name": "Nell and John Wooden Court",
+   "coordinate": [
+    -118.446848,
+    34.070335
+   ],
+   "category": "Athletics",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "neurological-rehabilitation-and-research-unit",
+   "name": "Neurological Rehabilitation & Research Unit",
+   "coordinate": [
+    -118.444278,
+    34.065767
+   ],
+   "category": "Health",
+   "address": "760 Westwood Plaza",
+   "aliases": [
+    "NRRU"
+   ]
+  },
+  {
+   "id": "neuroscience-research-building",
+   "name": "Neuroscience Research Building",
+   "coordinate": [
+    -118.443338,
+    34.067375
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "north-campus-shop",
+   "name": "North Campus Shop",
+   "coordinate": [
+    -118.443739,
+    34.073907
+   ],
+   "category": "Café",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "north-campus-student-center",
+   "name": "North Campus Student Center",
+   "coordinate": [
+    -118.442099,
+    34.074474
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "north-lane",
+   "name": "North Lane",
+   "coordinate": [
+    -118.450472,
+    34.06332
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "northern-lights",
+   "name": "Northern Lights",
+   "coordinate": [
+    -118.442348,
+    34.07443
+   ],
+   "category": "Café",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "northwest-campus-auditorium",
+   "name": "Northwest Campus Auditorium",
+   "coordinate": [
+    -118.450431,
+    34.071889
+   ],
+   "category": "Venue",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "oak-landscaping",
+   "name": "Oak Landscaping",
+   "coordinate": [
+    -118.441627,
+    34.064345
+   ],
+   "category": "Garden",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "olive-court",
+   "name": "Olive Court",
+   "coordinate": [
+    -118.450754,
+    34.062024
+   ],
+   "category": "Housing",
+   "address": "825 Weyburn Terrace",
+   "aliases": []
+  },
+  {
+   "id": "olympic-hall",
+   "name": "Olympic Hall",
+   "coordinate": [
+    -118.453628,
+    34.072379
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ornamental-monocots",
+   "name": "Ornamental Monocots",
+   "coordinate": [
+    -118.441622,
+    34.066069
+   ],
+   "category": "Garden",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "orthopaedic-hospital-research-center",
+   "name": "Orthopaedic Hospital Research Center",
+   "coordinate": [
+    -118.441314,
+    34.067334
+   ],
+   "category": "Building",
+   "address": "615 Charles E. Young Drive South",
+   "aliases": [
+    "OHRC"
+   ]
+  },
+  {
+   "id": "ostin-music-center-a",
+   "name": "Ostin Music Center A",
+   "coordinate": [
+    -118.440574,
+    34.070599
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ostin-music-center-b",
+   "name": "Ostin Music Center B",
+   "coordinate": [
+    -118.440494,
+    34.0702
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "palm-court",
+   "name": "Palm Court",
+   "coordinate": [
+    -118.45005,
+    34.061289
+   ],
+   "category": "Housing",
+   "address": "945 Weyburn Terrace",
+   "aliases": []
+  },
+  {
+   "id": "palms",
+   "name": "Palms",
+   "coordinate": [
+    -118.440831,
+    34.065792
+   ],
+   "category": "Garden",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "panda-express",
+   "name": "Panda Express",
+   "coordinate": [
+    -118.444199,
+    34.070624
+   ],
+   "category": "Dining",
+   "address": "308 Westwood Plaza",
+   "aliases": []
+  },
+  {
+   "id": "park-pool",
+   "name": "Park Pool",
+   "coordinate": [
+    -118.451495,
+    34.074133
+   ],
+   "category": "Athletics",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "park-pool-locker-rooms",
+   "name": "Park Pool Locker Rooms",
+   "coordinate": [
+    -118.451852,
+    34.074157
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "park-s-patio",
+   "name": "Park's Patio",
+   "coordinate": [
+    -118.441297,
+    34.066555
+   ],
+   "category": "Place",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "parking-1",
+   "name": "Parking 1",
+   "coordinate": [
+    -118.447293,
+    34.065193
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "parking-11",
+   "name": "Parking 11",
+   "coordinate": [
+    -118.45399,
+    34.074786
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "parking-2",
+   "name": "Parking 2",
+   "coordinate": [
+    -118.439845,
+    34.068602
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "parking-3",
+   "name": "Parking 3",
+   "coordinate": [
+    -118.44002,
+    34.077324
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "parking-32",
+   "name": "Parking 32",
+   "coordinate": [
+    -118.447766,
+    34.059957
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "parking-33",
+   "name": "Parking 33",
+   "coordinate": [
+    -118.449543,
+    34.060643
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "parking-36",
+   "name": "Parking 36",
+   "coordinate": [
+    -118.44749,
+    34.058865
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "parking-4",
+   "name": "Parking 4",
+   "coordinate": [
+    -118.444721,
+    34.072292
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "parking-5",
+   "name": "Parking 5",
+   "coordinate": [
+    -118.44295,
+    34.074195
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "parking-7",
+   "name": "Parking 7",
+   "coordinate": [
+    -118.446918,
+    34.072402
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "parking-8",
+   "name": "Parking 8",
+   "coordinate": [
+    -118.446744,
+    34.068264
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "parking-9",
+   "name": "Parking 9",
+   "coordinate": [
+    -118.443748,
+    34.068043
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "parking-a",
+   "name": "Parking A",
+   "coordinate": [
+    -118.438895,
+    34.071149
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "parking-dd",
+   "name": "Parking DD",
+   "coordinate": [
+    -118.450166,
+    34.069736
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "parking-e",
+   "name": "Parking E",
+   "coordinate": [
+    -118.442052,
+    34.065036
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "parking-mb-mf",
+   "name": "Parking MB/MF",
+   "coordinate": [
+    -118.446076,
+    34.064893
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "parking-rc",
+   "name": "Parking RC",
+   "coordinate": [
+    -118.451085,
+    34.075246
+   ],
+   "category": "Parking",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "pensive",
+   "name": "Pensive",
+   "coordinate": [
+    -118.44011,
+    34.075233
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "perloff-hall",
+   "name": "Perloff Hall",
+   "coordinate": [
+    -118.440219,
+    34.073354
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "peter-morton-medical-building",
+   "name": "Peter Morton Medical Building",
+   "coordinate": [
+    -118.446525,
+    34.065207
+   ],
+   "category": "Health",
+   "address": "200 UCLA Medical Plaza",
+   "aliases": [
+    "Medical Plaza 200"
+   ]
+  },
+  {
+   "id": "physics-and-astronomy-building",
+   "name": "Physics & Astronomy Building",
+   "coordinate": [
+    -118.441579,
+    34.070686
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "plant-growth-center",
+   "name": "Plant Growth Center",
+   "coordinate": [
+    -118.440291,
+    34.066294
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "plateia",
+   "name": "Plateia",
+   "coordinate": [
+    -118.44554,
+    34.069588
+   ],
+   "category": "Dining",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "pollination-garden",
+   "name": "Pollination Garden",
+   "coordinate": [
+    -118.441221,
+    34.066274
+   ],
+   "category": "Garden",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "portola-plaza",
+   "name": "Portola Plaza",
+   "coordinate": [
+    -118.441637,
+    34.071604
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "portola-stairs",
+   "name": "Portola Stairs",
+   "coordinate": [
+    -118.444023,
+    34.06982
+   ],
+   "category": "Stairs",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "powell-library",
+   "name": "Powell Library",
+   "coordinate": [
+    -118.442179,
+    34.071567
+   ],
+   "category": "Library",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "pritzker-hall",
+   "name": "Pritzker Hall",
+   "coordinate": [
+    -118.44076,
+    34.069637
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ptol-m-e-iii",
+   "name": "Ptolémée III",
+   "coordinate": [
+    -118.439519,
+    34.074928
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "public-affairs-building",
+   "name": "Public Affairs Building",
+   "coordinate": [
+    -118.43916,
+    34.074438
+   ],
+   "category": "Building",
+   "address": "337 Charles E. Young Drive, East",
+   "aliases": []
+  },
+  {
+   "id": "ram-head-with-broken-horn-vi",
+   "name": "Ram Head With Broken Horn VI",
+   "coordinate": [
+    -118.440921,
+    34.074604
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "reed-neurological-research-center",
+   "name": "Reed Neurological Research Center",
+   "coordinate": [
+    -118.444767,
+    34.066236
+   ],
+   "category": "Building",
+   "address": "710 Westwood Plaza",
+   "aliases": []
+  },
+  {
+   "id": "rehabilitation-building",
+   "name": "Rehabilitation Building",
+   "coordinate": [
+    -118.449241,
+    34.06078
+   ],
+   "category": "Building",
+   "address": "1000 Veteran Avenue",
+   "aliases": []
+  },
+  {
+   "id": "rendezvous-restaurant",
+   "name": "Rendezvous Restaurant",
+   "coordinate": [
+    -118.451867,
+    34.072587
+   ],
+   "category": "Dining",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "resnick-neuropsychiatric-hospital",
+   "name": "Resnick Neuropsychiatric Hospital",
+   "coordinate": [
+    -118.446501,
+    34.066103
+   ],
+   "category": "Health",
+   "address": "150 UCLA Medical Plaza",
+   "aliases": []
+  },
+  {
+   "id": "revive-cafe",
+   "name": "Revive Cafe",
+   "coordinate": [
+    -118.442489,
+    34.064707
+   ],
+   "category": "Café",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "rieber-court",
+   "name": "Rieber Court",
+   "coordinate": [
+    -118.452282,
+    34.072387
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "rieber-hall",
+   "name": "Rieber Hall",
+   "coordinate": [
+    -118.451504,
+    34.071954
+   ],
+   "category": "Housing",
+   "address": "310 De Neve Drive",
+   "aliases": []
+  },
+  {
+   "id": "rieber-terrace",
+   "name": "Rieber Terrace",
+   "coordinate": [
+    -118.452189,
+    34.072552
+   ],
+   "category": "Housing",
+   "address": "270 De Neve Drive",
+   "aliases": []
+  },
+  {
+   "id": "rieber-vista",
+   "name": "Rieber Vista",
+   "coordinate": [
+    -118.452279,
+    34.071989
+   ],
+   "category": "Housing",
+   "address": "280 De Neve Drive",
+   "aliases": []
+  },
+  {
+   "id": "rieber-walk",
+   "name": "Rieber Walk",
+   "coordinate": [
+    -118.451175,
+    34.07189
+   ],
+   "category": "Walkway",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "rolfe-hall",
+   "name": "Rolfe Hall",
+   "coordinate": [
+    -118.442121,
+    34.073868
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ronald-reagan-ucla-medical-center",
+   "name": "Ronald Reagan UCLA Medical Center",
+   "coordinate": [
+    -118.446343,
+    34.066455
+   ],
+   "category": "Health",
+   "address": "757 Westwood Plaza",
+   "aliases": []
+  },
+  {
+   "id": "rosenfeld-hall",
+   "name": "Rosenfeld Hall",
+   "coordinate": [
+    -118.44476,
+    34.06666
+   ],
+   "category": "Building",
+   "address": "700 Westwood Plaza",
+   "aliases": []
+  },
+  {
+   "id": "rosenfeld-library",
+   "name": "Rosenfeld Library",
+   "coordinate": [
+    -118.443466,
+    34.074382
+   ],
+   "category": "Library",
+   "address": "110 Westwood Plaza",
+   "aliases": []
+  },
+  {
+   "id": "royce-drive",
+   "name": "Royce Drive",
+   "coordinate": [
+    -118.442485,
+    34.074906
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "royce-hall",
+   "name": "Royce Hall",
+   "coordinate": [
+    -118.442189,
+    34.072904
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "rubio-s",
+   "name": "Rubio's",
+   "coordinate": [
+    -118.444213,
+    34.070178
+   ],
+   "category": "Dining",
+   "address": null,
+   "aliases": [
+    "Rubio's Coastal Grill"
+   ]
+  },
+  {
+   "id": "santa-monica-mountains",
+   "name": "Santa Monica Mountains",
+   "coordinate": [
+    -118.441618,
+    34.06641
+   ],
+   "category": "Garden",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "saxon-commons",
+   "name": "Saxon Commons",
+   "coordinate": [
+    -118.452789,
+    34.071426
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "saxon-residential-suites",
+   "name": "Saxon Residential Suites",
+   "coordinate": [
+    -118.453323,
+    34.071393
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "scai-lab",
+   "name": "ScAi Lab",
+   "coordinate": [
+    -118.443139,
+    34.069187
+   ],
+   "category": "Office",
+   "address": "580 Portola Plaza",
+   "aliases": []
+  },
+  {
+   "id": "schoenberg-music-building",
+   "name": "Schoenberg Music Building",
+   "coordinate": [
+    -118.440169,
+    34.07069
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "school-of-law",
+   "name": "School of Law",
+   "coordinate": [
+    -118.438579,
+    34.072971
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "school-of-public-health",
+   "name": "School of Public Health",
+   "coordinate": [
+    -118.443581,
+    34.066712
+   ],
+   "category": "Building",
+   "address": "650 Charles E. Young Drive South",
+   "aliases": [
+    "UCLA Fielding School of Public Health"
+   ]
+  },
+  {
+   "id": "science-and-engineering-library",
+   "name": "Science & Engineering Library",
+   "coordinate": [
+    -118.440779,
+    34.069268
+   ],
+   "category": "Library",
+   "address": null,
+   "aliases": [
+    "SEL"
+   ]
+  },
+  {
+   "id": "science-and-engineering-library-engineering-and-mathematical-sciences",
+   "name": "Science and Engineering Library – Engineering and Mathematical Sciences",
+   "coordinate": [
+    -118.442607,
+    34.069066
+   ],
+   "category": "Library",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "science-and-technology-research-building",
+   "name": "Science and Technology Research Building",
+   "coordinate": [
+    -118.448458,
+    34.060792
+   ],
+   "category": "Building",
+   "address": "1040 Veteran Avenue",
+   "aliases": []
+  },
+  {
+   "id": "seasnet-cafe",
+   "name": "Seasnet Cafe",
+   "coordinate": [
+    -118.443022,
+    34.069229
+   ],
+   "category": "Café",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "semel-institute-for-neuroscience-and-human-behavior",
+   "name": "Semel Institute for Neuroscience and Human Behavior",
+   "coordinate": [
+    -118.444539,
+    34.065807
+   ],
+   "category": "Building",
+   "address": "740 Westwood Plaza",
+   "aliases": [
+    "Jane and Terry Semel Institute for Neuroscience and Human Behavior"
+   ]
+  },
+  {
+   "id": "shapiro-fountain",
+   "name": "Shapiro Fountain",
+   "coordinate": [
+    -118.44256,
+    34.072198
+   ],
+   "category": "Landmark",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "slichter-hall",
+   "name": "Slichter Hall",
+   "coordinate": [
+    -118.440794,
+    34.068894
+   ],
+   "category": "Office",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "south-lane",
+   "name": "South Lane",
+   "coordinate": [
+    -118.451109,
+    34.062343
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "southern-lights",
+   "name": "Southern Lights",
+   "coordinate": [
+    -118.442346,
+    34.068389
+   ],
+   "category": "Café",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "southern-regional-library-facility",
+   "name": "Southern Regional Library Facility",
+   "coordinate": [
+    -118.454196,
+    34.071027
+   ],
+   "category": "Library",
+   "address": null,
+   "aliases": [
+    "SRLF"
+   ]
+  },
+  {
+   "id": "southwest-campus-apartments",
+   "name": "Southwest Campus Apartments",
+   "coordinate": [
+    -118.450574,
+    34.062739
+   ],
+   "category": "Housing",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "spaulding-field",
+   "name": "Spaulding Field",
+   "coordinate": [
+    -118.446855,
+    34.069205
+   ],
+   "category": "Athletics",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "spieker-aquatics-center",
+   "name": "Spieker Aquatics Center",
+   "coordinate": [
+    -118.450694,
+    34.074842
+   ],
+   "category": "Athletics",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "sproul-cove",
+   "name": "Sproul Cove",
+   "coordinate": [
+    -118.450883,
+    34.071702
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "sproul-hall",
+   "name": "Sproul Hall",
+   "coordinate": [
+    -118.45018,
+    34.072547
+   ],
+   "category": "Building",
+   "address": "De Neve Drive",
+   "aliases": []
+  },
+  {
+   "id": "sproul-landing",
+   "name": "Sproul Landing",
+   "coordinate": [
+    -118.450159,
+    34.071526
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "sproul-plaza",
+   "name": "Sproul Plaza",
+   "coordinate": [
+    -118.450685,
+    34.072285
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "standing-woman",
+   "name": "Standing Woman",
+   "coordinate": [
+    -118.440908,
+    34.075253
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "starbucks",
+   "name": "Starbucks",
+   "coordinate": [
+    -118.443322,
+    34.065913
+   ],
+   "category": "Café",
+   "address": null,
+   "aliases": [
+    "Starbucks Coffee"
+   ]
+  },
+  {
+   "id": "stein-plaza",
+   "name": "Stein Plaza",
+   "coordinate": [
+    -118.444147,
+    34.064984
+   ],
+   "category": "Walkway",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "stein-plaza-driveway",
+   "name": "Stein Plaza Driveway",
+   "coordinate": [
+    -118.44511,
+    34.064922
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "strathmore-building",
+   "name": "Strathmore Building",
+   "coordinate": [
+    -118.445229,
+    34.068295
+   ],
+   "category": "Building",
+   "address": "501-555 Westwood Plaza",
+   "aliases": []
+  },
+  {
+   "id": "strathmore-place",
+   "name": "Strathmore Place",
+   "coordinate": [
+    -118.44599,
+    34.068704
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "straus",
+   "name": "Straus",
+   "coordinate": [
+    -118.447827,
+    34.070022
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "straus-stadium",
+   "name": "Straus Stadium",
+   "coordinate": [
+    -118.448438,
+    34.0703
+   ],
+   "category": "Athletics",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "student-activities-center-sac",
+   "name": "Student Activities Center (SAC)",
+   "coordinate": [
+    -118.444094,
+    34.071468
+   ],
+   "category": "Building",
+   "address": "220 Westwood Plaza",
+   "aliases": []
+  },
+  {
+   "id": "subtropical-plants",
+   "name": "Subtropical Plants",
+   "coordinate": [
+    -118.441417,
+    34.065898
+   ],
+   "category": "Garden",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "subway",
+   "name": "Subway",
+   "coordinate": [
+    -118.442106,
+    34.068205
+   ],
+   "category": "Dining",
+   "address": "617 Charles Young Drive East Court of Sciences Student Center",
+   "aliases": []
+  },
+  {
+   "id": "sunset-amphitheater",
+   "name": "Sunset Amphitheater",
+   "coordinate": [
+    -118.453125,
+    34.075348
+   ],
+   "category": "Venue",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "sunset-canyon-recreation-center",
+   "name": "Sunset Canyon Recreation Center",
+   "coordinate": [
+    -118.452189,
+    34.074747
+   ],
+   "category": "Athletics",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "sunset-tennis-court",
+   "name": "Sunset Tennis Court",
+   "coordinate": [
+    -118.45047,
+    34.074471
+   ],
+   "category": "Athletics",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "sweetspot",
+   "name": "Sweetspot",
+   "coordinate": [
+    -118.444086,
+    34.070637
+   ],
+   "category": "Shop",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "sycamore-court",
+   "name": "Sycamore Court",
+   "coordinate": [
+    -118.449246,
+    34.062111
+   ],
+   "category": "Housing",
+   "address": "925 Weyburn Place",
+   "aliases": []
+  },
+  {
+   "id": "sycamore-tennis-courts",
+   "name": "Sycamore Tennis Courts",
+   "coordinate": [
+    -118.454398,
+    34.072201
+   ],
+   "category": "Athletics",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "taco-bell",
+   "name": "Taco Bell",
+   "coordinate": [
+    -118.443966,
+    34.070283
+   ],
+   "category": "Dining",
+   "address": "308 Westwood Plaza",
+   "aliases": []
+  },
+  {
+   "id": "terasaki-life-sciences-building",
+   "name": "Terasaki Life Sciences Building",
+   "coordinate": [
+    -118.440106,
+    34.067188
+   ],
+   "category": "Building",
+   "address": "610 Charles E Young Drive East",
+   "aliases": []
+  },
+  {
+   "id": "the-paseo",
+   "name": "The Paseo",
+   "coordinate": [
+    -118.449036,
+    34.061337
+   ],
+   "category": "Housing",
+   "address": "11000 Weyburn Drive",
+   "aliases": []
+  },
+  {
+   "id": "the-song-of-the-vowels",
+   "name": "The Song Of The Vowels",
+   "coordinate": [
+    -118.439641,
+    34.074601
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "the-study-at-hedrick",
+   "name": "The Study at Hedrick",
+   "coordinate": [
+    -118.452307,
+    34.073169
+   ],
+   "category": "Dining",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "tiverton-avenue",
+   "name": "Tiverton Avenue",
+   "coordinate": [
+    -118.44258,
+    34.063938
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "tiverton-drive",
+   "name": "Tiverton Drive",
+   "coordinate": [
+    -118.441728,
+    34.067056
+   ],
+   "category": "Walkway",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "tongva-basket-weaving-garden",
+   "name": "Tongva Basket Weaving Garden",
+   "coordinate": [
+    -118.440858,
+    34.066126
+   ],
+   "category": "Garden",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "torso",
+   "name": "Torso",
+   "coordinate": [
+    -118.440055,
+    34.075447
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "tower-of-masks",
+   "name": "Tower of Masks",
+   "coordinate": [
+    -118.43914,
+    34.075805
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "transit-operations-maintenance-yard",
+   "name": "Transit Operations Maintenance Yard",
+   "coordinate": [
+    -118.448431,
+    34.059479
+   ],
+   "category": "Building",
+   "address": "11075 Kinross Avenue",
+   "aliases": []
+  },
+  {
+   "id": "trimana",
+   "name": "Trimana",
+   "coordinate": [
+    -118.444579,
+    34.058313
+   ],
+   "category": "Café",
+   "address": "10920 Wilshire Boulevard",
+   "aliases": []
+  },
+  {
+   "id": "two-piece-reclining-figure-no-3",
+   "name": "Two Piece Reclining Figure, No. 3",
+   "coordinate": [
+    -118.439772,
+    34.075501
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "two-piece-reclining-figure-no-3-2",
+   "name": "Two-Piece Reclining Figure, No. 3",
+   "coordinate": [
+    -118.439863,
+    34.075531
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "u-see-la",
+   "name": "U See LA",
+   "coordinate": [
+    -118.444118,
+    34.07058
+   ],
+   "category": "Shop",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ucla-anderson-school-of-management",
+   "name": "UCLA Anderson School of Management",
+   "coordinate": [
+    -118.443699,
+    34.073982
+   ],
+   "category": "Place",
+   "address": "110 Westwood Plaza",
+   "aliases": []
+  },
+  {
+   "id": "ucla-art-council-amphitheater",
+   "name": "UCLA Art Council Amphitheater",
+   "coordinate": [
+    -118.443487,
+    34.072732
+   ],
+   "category": "Venue",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ucla-athletic-hall-of-fame",
+   "name": "UCLA Athletic Hall of Fame",
+   "coordinate": [
+    -118.445274,
+    34.070649
+   ],
+   "category": "Museum",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ucla-bike-shop",
+   "name": "UCLA Bike Shop",
+   "coordinate": [
+    -118.445928,
+    34.071974
+   ],
+   "category": "Shop",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ucla-blood-and-platelet-center-ackerman-union",
+   "name": "UCLA Blood and Platelet Center – Ackerman Union",
+   "coordinate": [
+    -118.444282,
+    34.070703
+   ],
+   "category": "Health",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ucla-botanical-garden-shadehouse-north",
+   "name": "UCLA Botanical Garden Shadehouse North",
+   "coordinate": [
+    -118.440405,
+    34.066006
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ucla-botanical-garden-shadehouse-south",
+   "name": "UCLA Botanical Garden Shadehouse South",
+   "coordinate": [
+    -118.440464,
+    34.065953
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ucla-extension",
+   "name": "UCLA Extension",
+   "coordinate": [
+    -118.446051,
+    34.059383
+   ],
+   "category": "Place",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ucla-external-affairs",
+   "name": "UCLA External Affairs",
+   "coordinate": [
+    -118.44462,
+    34.058206
+   ],
+   "category": "Office",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ucla-game-lab",
+   "name": "UCLA Game Lab",
+   "coordinate": [
+    -118.440795,
+    34.075962
+   ],
+   "category": "Shop",
+   "address": "240 Charles E. Young Drive North",
+   "aliases": []
+  },
+  {
+   "id": "ucla-guest-house",
+   "name": "UCLA Guest House",
+   "coordinate": [
+    -118.438482,
+    34.074553
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ucla-hill-top-store",
+   "name": "UCLA Hill Top Store",
+   "coordinate": [
+    -118.450894,
+    34.072393
+   ],
+   "category": "Shop",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ucla-lab-school",
+   "name": "UCLA Lab School",
+   "coordinate": [
+    -118.44365,
+    34.075479
+   ],
+   "category": "Place",
+   "address": null,
+   "aliases": [
+    "Corinne A. Seeds University Elementary School"
+   ]
+  },
+  {
+   "id": "ucla-levering-terrace-apartments-student-housing",
+   "name": "UCLA Levering Terrace Apartments Student Housing",
+   "coordinate": [
+    -118.44943,
+    34.063335
+   ],
+   "category": "Housing",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ucla-louise-m-darling-biomedical-library",
+   "name": "UCLA Louise M. Darling Biomedical Library",
+   "coordinate": [
+    -118.442138,
+    34.066326
+   ],
+   "category": "Library",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ucla-makerspace",
+   "name": "UCLA MakerSpace",
+   "coordinate": [
+    -118.453611,
+    34.072593
+   ],
+   "category": "Place",
+   "address": "237 De Neve Drive",
+   "aliases": []
+  },
+  {
+   "id": "ucla-new-wight-gallery",
+   "name": "UCLA New Wight Gallery",
+   "coordinate": [
+    -118.440957,
+    34.075589
+   ],
+   "category": "Museum",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ucla-opus-project",
+   "name": "UCLA Opus Project",
+   "coordinate": [
+    -118.444619,
+    34.057982
+   ],
+   "category": "Office",
+   "address": "10920 Wilshire Boulevard",
+   "aliases": []
+  },
+  {
+   "id": "ucla-planetarium",
+   "name": "UCLA Planetarium",
+   "coordinate": [
+    -118.442688,
+    34.06938
+   ],
+   "category": "Place",
+   "address": "520 Portola Plaza",
+   "aliases": []
+  },
+  {
+   "id": "ucla-police-department",
+   "name": "UCLA Police Department",
+   "coordinate": [
+    -118.445433,
+    34.06732
+   ],
+   "category": "Building",
+   "address": "601 Westwood Plaza",
+   "aliases": [
+    "UCLA Police Building"
+   ]
+  },
+  {
+   "id": "ucla-school-of-dentistry",
+   "name": "UCLA School of Dentistry",
+   "coordinate": [
+    -118.442028,
+    34.066404
+   ],
+   "category": "Building",
+   "address": "10833 Le Conte Ave",
+   "aliases": []
+  },
+  {
+   "id": "ucla-south-campus-cogen-project",
+   "name": "UCLA South Campus Cogen Project",
+   "coordinate": [
+    -118.446333,
+    34.067382
+   ],
+   "category": "Building",
+   "address": "731 Charles E Young Drive South",
+   "aliases": []
+  },
+  {
+   "id": "ucla-store",
+   "name": "UCLA Store",
+   "coordinate": [
+    -118.444491,
+    34.070761
+   ],
+   "category": "Shop",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ucla-store-bookzone",
+   "name": "UCLA Store BookZone",
+   "coordinate": [
+    -118.444244,
+    34.070517
+   ],
+   "category": "Shop",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ucla-store-market",
+   "name": "UCLA Store Market",
+   "coordinate": [
+    -118.444176,
+    34.070472
+   ],
+   "category": "Shop",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "ucla-transportation",
+   "name": "UCLA Transportation",
+   "coordinate": [
+    -118.445256,
+    34.068033
+   ],
+   "category": "Office",
+   "address": "555 Westwood Plaza",
+   "aliases": []
+  },
+  {
+   "id": "ueberroth-building",
+   "name": "Ueberroth Building",
+   "coordinate": [
+    -118.446977,
+    34.064003
+   ],
+   "category": "Building",
+   "address": "10945 Le Conte Avenue",
+   "aliases": [
+    "1984 Olympic Committee Building",
+    "PVUB"
+   ]
+  },
+  {
+   "id": "university-credit-union",
+   "name": "University Credit Union",
+   "coordinate": [
+    -118.444191,
+    34.070722
+   ],
+   "category": "Bank",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "university-of-california-los-angeles-post-office",
+   "name": "University of California Los Angeles Post Office",
+   "coordinate": [
+    -118.44397,
+    34.070532
+   ],
+   "category": "Place",
+   "address": null,
+   "aliases": [
+    "USPS"
+   ]
+  },
+  {
+   "id": "university-residence",
+   "name": "University Residence",
+   "coordinate": [
+    -118.442115,
+    34.076361
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "untitled-caf",
+   "name": "Untitled Café",
+   "coordinate": [
+    -118.440938,
+    34.075963
+   ],
+   "category": "Café",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "upper-picnic-area-modular-units",
+   "name": "Upper Picnic Area Modular Units",
+   "coordinate": [
+    -118.452266,
+    34.07552
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "vatche-and-tamar-manoukian-medical-building",
+   "name": "Vatche and Tamar Manoukian Medical Building",
+   "coordinate": [
+    -118.445871,
+    34.06547
+   ],
+   "category": "Health",
+   "address": "100 UCLA Medical Plaza",
+   "aliases": []
+  },
+  {
+   "id": "veggie-grill",
+   "name": "Veggie Grill",
+   "coordinate": [
+    -118.444085,
+    34.070172
+   ],
+   "category": "Dining",
+   "address": "308 Westwood Plaza",
+   "aliases": []
+  },
+  {
+   "id": "victory",
+   "name": "Victory",
+   "coordinate": [
+    -118.440535,
+    34.0752
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "village-terrace-condominiums",
+   "name": "Village Terrace Condominiums",
+   "coordinate": [
+    -118.448928,
+    34.062832
+   ],
+   "category": "Housing",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "walking-man",
+   "name": "Walking Man",
+   "coordinate": [
+    -118.440521,
+    34.07553
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "wallis-annenberg-stadium",
+   "name": "Wallis Annenberg Stadium",
+   "coordinate": [
+    -118.445478,
+    34.072636
+   ],
+   "category": "Athletics",
+   "address": "221 Westwood Plaza",
+   "aliases": []
+  },
+  {
+   "id": "walter-h-rubsamen-music-library",
+   "name": "Walter H. Rubsamen Music Library",
+   "coordinate": [
+    -118.440394,
+    34.071
+   ],
+   "category": "Library",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "war-remembrance",
+   "name": "War Remembrance",
+   "coordinate": [
+    -118.439525,
+    34.075179
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "wasserman-building",
+   "name": "Wasserman Building",
+   "coordinate": [
+    -118.444613,
+    34.065246
+   ],
+   "category": "Health",
+   "address": "300 Stein Plaza",
+   "aliases": []
+  },
+  {
+   "id": "wasserman-football-center",
+   "name": "Wasserman Football Center",
+   "coordinate": [
+    -118.447517,
+    34.069374
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "wells-fargo",
+   "name": "Wells Fargo",
+   "coordinate": [
+    -118.444897,
+    34.058262
+   ],
+   "category": "Bank",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "wendy-and-leonard-goldberg-medical-building",
+   "name": "Wendy and Leonard Goldberg Medical Building",
+   "coordinate": [
+    -118.446102,
+    34.064327
+   ],
+   "category": "Health",
+   "address": "300 UCLA Medical Plaza",
+   "aliases": []
+  },
+  {
+   "id": "wescom",
+   "name": "Wescom",
+   "coordinate": [
+    -118.444377,
+    34.07057
+   ],
+   "category": "Bank",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "west-alumni-center",
+   "name": "West Alumni Center",
+   "coordinate": [
+    -118.445396,
+    34.070208
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "west-medical-building",
+   "name": "West Medical Building",
+   "coordinate": [
+    -118.447847,
+    34.060531
+   ],
+   "category": "Building",
+   "address": "1010 Veteran Avenue",
+   "aliases": []
+  },
+  {
+   "id": "west-medical-steam-plant",
+   "name": "West Medical Steam Plant",
+   "coordinate": [
+    -118.448227,
+    34.061005
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "westholme-avenue",
+   "name": "Westholme Avenue",
+   "coordinate": [
+    -118.439502,
+    34.069671
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "westwood-plaza",
+   "name": "Westwood Plaza",
+   "coordinate": [
+    -118.444609,
+    34.071529
+   ],
+   "category": "Plaza",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "wetzel-s-pretzels",
+   "name": "Wetzel's Pretzels",
+   "coordinate": [
+    -118.444031,
+    34.070509
+   ],
+   "category": "Dining",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "weyburn-commons",
+   "name": "Weyburn Commons",
+   "coordinate": [
+    -118.448901,
+    34.061508
+   ],
+   "category": "Building",
+   "address": "11020 Weyburn Drive",
+   "aliases": []
+  },
+  {
+   "id": "weyburn-drive",
+   "name": "Weyburn Drive",
+   "coordinate": [
+    -118.449401,
+    34.061707
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": [
+    "Weyburn Avenue"
+   ]
+  },
+  {
+   "id": "weyburn-park-area",
+   "name": "Weyburn Park Area",
+   "coordinate": [
+    -118.450811,
+    34.063193
+   ],
+   "category": "Plaza",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "weyburn-terrace",
+   "name": "Weyburn Terrace",
+   "coordinate": [
+    -118.450557,
+    34.062393
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "why",
+   "name": "Why?",
+   "coordinate": [
+    -118.440914,
+    34.074533
+   ],
+   "category": "Artwork",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "wilshire-center",
+   "name": "Wilshire Center",
+   "coordinate": [
+    -118.444669,
+    34.058143
+   ],
+   "category": "Building",
+   "address": "10920 Wilshire Boulevard",
+   "aliases": [
+    "Unisys Building"
+   ]
+  },
+  {
+   "id": "wilson-plaza",
+   "name": "Wilson Plaza",
+   "coordinate": [
+    -118.444268,
+    34.072179
+   ],
+   "category": "Plaza",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "wooden-west",
+   "name": "Wooden West",
+   "coordinate": [
+    -118.445926,
+    34.071539
+   ],
+   "category": "Building",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "wyton-drive",
+   "name": "Wyton Drive",
+   "coordinate": [
+    -118.438196,
+    34.074013
+   ],
+   "category": "Street",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "yoshinoya",
+   "name": "Yoshinoya",
+   "coordinate": [
+    -118.442108,
+    34.0683
+   ],
+   "category": "Dining",
+   "address": null,
+   "aliases": []
+  },
+  {
+   "id": "young-hall",
+   "name": "Young Hall",
+   "coordinate": [
+    -118.441322,
+    34.068612
+   ],
+   "category": "Office",
+   "address": null,
+   "aliases": []
+  }
+ ]
+}

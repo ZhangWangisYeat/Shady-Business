@@ -1,4 +1,4 @@
-import type { Coordinate, Place, RoutesResponse } from './types';
+import type { PlacesResponse, RoutesResponse } from './types';
 const BASE = process.env.EXPO_PUBLIC_API_URL;
 
 async function json<T>(path: string, init?: RequestInit): Promise<T> {
@@ -18,7 +18,8 @@ async function json<T>(path: string, init?: RequestInit): Promise<T> {
     return await result.json() as T;
   } finally { clearTimeout(timer); }
 }
-export const getPlaces = () => json<{ places: Place[] }>('/api/places');
+export const searchPlaces = (query: string, limit = 8) =>
+  json<PlacesResponse>(`/api/places?q=${encodeURIComponent(query)}&limit=${limit}`);
 export const getRoutes = (origin: string, destination: string, temperatureC: number) => json<RoutesResponse>('/api/routes', {
   method: 'POST', body: JSON.stringify({
     origin: { place_id: origin }, destination: { place_id: destination },

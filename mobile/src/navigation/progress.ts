@@ -1,6 +1,6 @@
 import type { Coordinate, Route, ShadeState } from '../api/types';
 
-function meters(a: Coordinate, b: Coordinate): number {
+export function meters(a: Coordinate, b: Coordinate): number {
   const mid = (a[1] + b[1]) * Math.PI / 360;
   return Math.hypot((a[1]-b[1])*111320,(a[0]-b[0])*111320*Math.cos(mid));
 }

@@ -23,3 +23,6 @@ Graph download is opt-in and not included in ZIP; offline tests use synthetic gr
 
 ## ADR-008 — Template freeze ahead of hackathon
 Retain existing Expo + Mapbox and FastAPI starter files today. Conduct data audit, normalizer, source tracking and geometric algorithm planning now; implement/validate route and shade improvements after the hackathon begins. No new infrastructure or unnecessary UI/backend code paths as part of this patch.
+
+## ADR-009 — Campus place search from OpenStreetMap (2026-10-17)
+Typed start/destination search uses named OSM features inside the UCLA campus boundary, fetched once by `scripts/fetch_ucla_places.py --confirm-network` (free Overpass) and committed as `backend/app/places/ucla_places.json` with ODbL attribution shown in the app. Google Places/Apple Maps data is excluded: their terms forbid caching or reuse outside their own maps and they are paid. Mapbox Search is excluded for now (billable beyond its free tier; no spend without approval). UCLA's own campus map has no stated reuse license, so it is not scraped. Approved by the user as an exception to the ADR-008 template freeze. Known gap: pins are building centers, not entrances.

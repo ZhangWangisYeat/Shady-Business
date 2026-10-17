@@ -41,6 +41,13 @@ class RouteSegment(BaseModel):
     unknown_seconds: float
     geometry: LineString
 
+class RouteStep(BaseModel):
+    maneuver: Literal["depart", "straight", "slight_left", "slight_right", "left", "right",
+                      "sharp_left", "sharp_right", "arrive"]
+    instruction: str
+    way_name: str | None  # OSM name when the path has one; unnamed walkways are None
+    distance_m: float  # walked from this step until the next maneuver
+
 class RouteResponseItem(BaseModel):
     id: str
     mode: Literal["fastest", "recommended", "maximum_shade"]
@@ -52,6 +59,7 @@ class RouteResponseItem(BaseModel):
     optimization_quality: Literal["shortest_time", "candidate_search", "unavailable"]
     geometry: LineString
     segments: list[RouteSegment]
+    steps: list[RouteStep]
 
 class Conditions(BaseModel):
     temperature_c: float

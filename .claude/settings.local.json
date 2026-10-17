@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell($env:ANDROID_HOME = \"$env:LOCALAPPDATA\\\\Android\\\\Sdk\"; & \"$env:ANDROID_HOME\\\\emulator\\\\emulator\" -list-avds)",
+      "Bash(curl -s --max-time 3 localhost:8000/api/health)",
+      "Bash(adb shell *)",
+      "Bash(adb devices *)",
+      "Bash(adb reverse *)",
+      "Bash(curl -s http://127.0.0.1:8081/status)"
+    ]
+  }
+}
