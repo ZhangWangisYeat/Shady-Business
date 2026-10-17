@@ -1,0 +1,120 @@
+{
+  "project": "Shady Business",
+  "scope": "UCLA main campus",
+  "researched_on": "2026-10-17",
+  "assets_downloaded": false,
+  "sources": [
+    {
+      "id": "ucla_tree_inventory",
+      "name": "UCLA ArborPro Public Tree Inventory",
+      "url": "https://app.arborprousa.com/viewer/7q07Ea8G2uVSf6KR/legacy_tree/ku2laqgzx6",
+      "record_dates": "2023-2024",
+      "priority": "P0",
+      "kind": "tree points, measurements (if access granted)",
+      "license_status": "public viewer confirmed; bulk export and downstream reuse not verified",
+      "availability": "public viewer; CSV export unverified",
+      "repo_local_target": "backend/data/ucla_trees.geojson",
+      "next_action": "check viewer CSV export and permission; if available normalize lat/lon, measured height and crown spread",
+      "usable_now": false
+    },
+    {
+      "id": "ucla_urban_forest_plan",
+      "name": "UCLA 2025 Urban Forest Management Plan",
+      "url": "https://sustain.ucla.edu/wp-content/uploads/2025/07/Reduced-Size-Final-UCLA-Urban-Forest-Management-Plan-July-2025.pdf",
+      "record_dates": "2023-2024 inventory; 2025 report",
+      "priority": "P0",
+      "kind": "methodology and aggregate tree statistics",
+      "license_status": "viewing reference only; do not redistribute original PDF without permission",
+      "availability": "public report",
+      "next_action": "verify field schema against inventoried CSV or permissioned extract",
+      "usable_now": true
+    },
+    {
+      "id": "la_2024_canopy",
+      "name": "LA County LARIAC7 TREE_CANOPY_2024",
+      "url": "https://image.gis.lacounty.gov/image/rest/services/LARIAC7/TREE_CANOPY_2024/ImageServer",
+      "record_dates": "2023-2024 imagery/height inputs, county service created 2026",
+      "priority": "P1",
+      "kind": "canopy classification 1m raster, not individual heights",
+      "license_status": "public service but downstream reuse and redistribution terms unverified",
+      "availability": "public ArcGIS service; exact UCLA export not tested",
+      "repo_local_target": "backend/data/ucla_canopy.tif",
+      "next_action": "confirm permit for export and derivative use; inspect small central campus footprint",
+      "usable_now": false
+    },
+    {
+      "id": "la_2023_buildings",
+      "name": "LA County Building Outline (2023)",
+      "url": "https://rpgis.isd.lacounty.gov/arcgis/rest/services/GISNET_Public/MapServer/434",
+      "metadata_url": "https://public.gis.lacounty.gov/arcgis/rest/services/DRP/GISNET_Public/MapServer/434/iteminfo",
+      "record_dates": "2023 imagery; item exported January 2025",
+      "priority": "P1 conditional",
+      "kind": "building polygons with HEIGHT/ELEV fields",
+      "license_status": "metadata explicitly says LARIAC Members only; DO NOT republish or automatically ingest",
+      "availability": "public viewer only; reuse not authorized",
+      "next_action": "seek explicit permission; use OSM building geometry/USGS heights in meantime",
+      "usable_now": false
+    },
+    {
+      "id": "osm_ucla",
+      "name": "OpenStreetMap UCLA paths and buildings",
+      "url": "https://www.openstreetmap.org/copyright",
+      "record_dates": "community updated; query date must be recorded",
+      "priority": "P0",
+      "kind": "pedestrian routing graph and some building geometry/height tags",
+      "license_status": "ODbL with attribution and applicable share-alike/derived-database requirements",
+      "availability": "fetch script already in repository; not downloaded in package",
+      "repo_local_target": "backend/data/ucla_walk.graphml",
+      "next_action": "run scripts/fetch_ucla_graph.py --confirm-network and validate campus footpaths",
+      "usable_now": true
+    },
+    {
+      "id": "ucla_campus_map",
+      "name": "UCLA Facilities Campus and Accessibility Maps",
+      "url": "https://map.ucla.edu/downloads/",
+      "record_dates": "2025 dated public campus-map example; verify latest downloadable versions",
+      "priority": "P0",
+      "kind": "visual validation of named places, pathways, access restrictions",
+      "license_status": "reference material; redistributing map PDF not assumed permitted",
+      "availability": "public downloadable PDFs and live campus map",
+      "next_action": "compare OSM routes against access map; note ramps and stairs",
+      "usable_now": true
+    },
+    {
+      "id": "usgs_3dep",
+      "name": "USGS 3DEP lidar and elevation",
+      "url": "https://www.usgs.gov/tools/lidarexplorer",
+      "record_dates": "depends on available UCLA acquisition: not verified",
+      "priority": "P2",
+      "kind": "potentially DSM/DTM and building/tree heights from point clouds",
+      "license_status": "USGS 3DEP public domain",
+      "availability": "portal exists; campus-specific survey/product must be checked",
+      "next_action": "query UCLA 500m area for lidar point clouds, collection year and file size",
+      "usable_now": false
+    },
+    {
+      "id": "ucla_visual_photos",
+      "name": "Wikimedia Commons UCLA photographs",
+      "url": "https://commons.wikimedia.org/wiki/Category:Campus_of_the_University_of_California,_Los_Angeles",
+      "record_dates": "varies by image",
+      "priority": "P2",
+      "kind": "visual checks and potential pitch assets",
+      "license_status": "per-image license; attribution and share-alike as applicable",
+      "availability": "public category",
+      "next_action": "choose individually licensed assets; record capture date and author",
+      "usable_now": true
+    },
+    {
+      "id": "mapillary_ucla",
+      "name": "Mapillary street-level imagery",
+      "url": "https://help.mapillary.com/hc/en-us/articles/115001770409-CC-BY-SA-license-for-open-data",
+      "record_dates": "depends on user uploads",
+      "priority": "P2",
+      "kind": "visual cross-checking if UCLA sidewalk coverage exists",
+      "license_status": "CC-BY-SA 4.0 imagery; API conditions apply",
+      "availability": "UCLA coverage/date not verified",
+      "next_action": "inspect capture dates and permissions before using images",
+      "usable_now": false
+    }
+  ]
+}
