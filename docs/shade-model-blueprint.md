@@ -9,7 +9,17 @@
 - `canopy.tif`: optional separate 2024 canopy coverage layer **only if rights confirmed**; this has crown extent but not per-tree height.
 - `terrain.tif`: optional USGS bare-earth DEM after exact UCLA coverage confirmed.
 
-**Current adapter status:** Existing `backend/app/shade/model.py` only loads `backend/data/ucla_buildings.geojson` with `height_m` and `metadata.coverage_complete_verified`. The measured-tree adapter and combined tree/building shadow scoring are **not yet implemented**. Keep the existing runtime untouched until the hackathon implementation gate.
+**Local scoring slice (2026-10-17):** `backend/app/shade/model.py` now provides concavity-preserving building sweeps and explicit bounded coverage; `backend/app/shade/scoring.py` computes ordered exact-intersection segments and exposure totals. See `docs/shade-scoring.md` for inputs, CLI, uncertainty and tests. This is an independently callable algorithm; the route service still uses its legacy adapter and the mobile/API schema is unchanged. Measured-tree modeling, actual UCLA model data and field validation remain **not implemented**. The user explicitly authorized this algorithm slice ahead of the broader implementation gate.
+
+**Subsequent tree integration (2026-10-17, supersedes the adapter status above):**
+The user identified the existing CSV exported in **查找 UCLA 植被数据** and explicitly
+requested local integration. `scripts/import_arborpro_trees.py` now imports the
+bounded study area; `backend/app/shade/trees.py` projects opaque ellipsoid crown
+estimates from inventory height/spread. Default model loading combines local
+134-height OSM buildings and 3,623 tree records. `/api/routes` uses precise split
+scores without changing public fields/enums. **96 backend tests passed**, plus
+real-data API comparisons. See `docs/tree-shade-integration.md`. Raw/normalized
+geodata remains ignored; public redistribution and field accuracy are not claimed.
 
 ## One-day algorithmic approach
 1. Project GPS WGS84 coordinates to a local meter-based CRS (EPSG:26911) using `pyproj`. Avoid latitude/longitude geometry buffers or mixing feet with meters.

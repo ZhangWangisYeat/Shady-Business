@@ -1,5 +1,75 @@
 # Verified project status — 2026-10-17
 
+## Completed local crown integration (supersedes earlier intake blockers)
+
+- Read the chat **查找 UCLA 植被数据** and used its existing local ArborPro CSV at
+  the user's explicit request. No new download or GitHub write was performed.
+- Imported 20,177 source rows into the OSM study rectangle: 16,553 outside,
+  1 non-tree excluded, **3,623 standing-tree records with usable height/spread**.
+  Source coordinates/dimensions/IDs retained with units and SHA-256; no default
+  crown radius, survey date or complete coverage invented.
+- Building + tree model loads by default (134 buildings, 3,623 crowns), supports
+  standalone `--trees`, and supplies precise segments to existing `/api/routes`
+  without changing public JSON shape or mobile enums. Crown vertical extent and
+  foliage opacity are explicitly approximate; uncovered daylight remains unknown.
+- **96 backend tests PASS**, including 32 tree-specific cases and existing
+  scoring/import/API/graph/policy tests. Real-data in-memory OSM API checks passed
+  at 09:00/12:00/15:00/23:00 with conserved times and connected segment geometry.
+  Daytime API calls took about 1.2–1.3 seconds on this machine.
+- Dataset files remain Git-ignored. Real source redistribution, complete campus
+  coverage, field accuracy and physical-device validation are **NOT VERIFIED**.
+  A default GraphML is still not installed in this clone; the real-data API test
+  supplied the existing OSM graph in memory, not a running app deployment.
+- See `docs/tree-shade-integration.md` for formulas, commands and comparison
+  results. Earlier sections below are historical milestones, not current blockers.
+
+## ArborPro public viewer inspection (2026-10-17)
+
+- Supplied UCLA viewer successfully loaded in the browser. Verified actual table
+  fields: IDs, latitude/longitude, height/crown in feet, status and species.
+  Pagination reports 20,177 records, including off-campus entries.
+- Opened inventory panel; no visible Report/Export CSV control found there.
+  No export, bulk scrape, restricted endpoint request, or model-use permission
+  obtained. Measured tree data is not loaded into the scoring runtime yet.
+- Documented observed fields, unit mapping, supported vendor export paths and
+  remaining access/permission questions in `docs/references/ucla-data-audit.md`.
+
+## Local data intake slice (2026-10-17, after algorithm slice)
+
+- Read-only remote inspection found `main` and `Backend-APIs` at the same commit;
+  tracked Overpass cache has no building/tree obstruction data.
+- Imported an existing local ODbL OSM bundle into ignored
+  `backend/data/ucla_buildings.geojson`: 153 footprints, 134 unverified OSM height
+  tags usable by the model, 19 heights kept unknown. Source SHA-256 and units
+  recorded; coverage remains unverified. Actual solar/shadow/scoring smoke passed.
+- Excluded 175 fixed-radius tree crowns and 2 woodland polygons from measured
+  tree inputs. No measured canopy file or tree-shadow runtime integration yet.
+- Full intake findings and remaining tree-data requirements:
+  `docs/references/ucla-data-audit.md`. No GitHub write or upload performed.
+- Intake verification: **64 backend tests passed**, including 9 new importer
+  cases. Direct health check reports `shade_status=modeled` and
+  `dataset_status=not_loaded`: buildings are loaded but a routing GraphML is not.
+  Skill mirror, staged/unstaged whitespace checks passed; generated building
+  data is confirmed ignored by Git. No field or mobile accuracy claim follows.
+
+## Local feature slice: route shade scoring (2026-10-17)
+
+- Local branch `feature/route-shade-scoring`; GitHub has not been pushed or changed.
+- Independent scoring algorithm and local JSON command implemented; usage and
+  limits in `docs/shade-scoring.md`. Builds exact-intersection ordered road
+  segments, separates known sun/shade/unknown/nighttime, conserves supplied edge
+  durations, and retains provenance. No public JSON schema or route-policy change.
+- Building sweeps preserve concavities/courtyards; overlapping shadows count once.
+  Low-angle predictions return unknown rather than silently truncating shadows.
+- Verification: **55 backend tests passed** (46 new shade tests and 9 existing
+  API/graph/policy tests) on Windows/Python 3.14.2. Skill mirror check and
+  `git diff --check` passed. The installed Shapely emitted 79 deprecation
+  warnings for the still-compatible `shapely.ops.transform` API; none are test
+  failures. FastAPI in-process tests needed the unrestricted local runner because
+  its restricted counterpart stalled. Tests made no external provider requests.
+- No real building/tree dataset loaded; no field validation, mobile integration,
+  or G2 sign-off. Runtime route service still uses its legacy shade adapter.
+
 ## Verified in creation environment
 - GitHub-ready directory structure; five canonical portable skills and mirror script.
 - FastAPI `/api/health`, `/api/places`, `/api/routes` source code; no hidden mock route fallback.

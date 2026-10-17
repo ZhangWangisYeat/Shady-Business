@@ -32,6 +32,15 @@ Numbers and empty lines above are **schema placeholders only, NOT a real valid r
 
 Enums: route `mode = fastest|recommended|maximum_shade`; `shade_state=shade|sun|unknown`; `optimization_quality=shortest_time|candidate_search|unavailable`; `same_as` refers to an earlier mode if exact path duplicates it. If any segment's exposure is unknown, `sun_seconds` for the route is **null** rather than falsely reporting a complete numeric exposure. `unknown_seconds` is measured walking time on unknown segments.
 
+Local tree-integration slice: the backend now splits original edges at modeled
+building/tree shadow and coverage boundaries, so mixed edges can return multiple
+ordered segment geometries without adding fields or enums. Missing tree
+dimensions remain unmodeled; data acquisition does not establish full coverage.
+At night, `shade_state=unknown` means daytime shade classification is inapplicable,
+while direct-sun exposure is known zero: segment/route `sun_seconds=0` and
+`unknown_seconds=0`, with explanatory `conditions.model_limitations`. The internal
+standalone scorer uses a distinct `no_direct_sun` state; it is not a mobile enum.
+
 When data is missing, all three route modes select the **same fastest graph path** with `same_as` set. Maximum shade uses candidate search, **not proven global optimum**. This will change when the optimizer is improved.
 
 ## Native UI

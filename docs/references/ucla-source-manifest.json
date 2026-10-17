@@ -11,11 +11,13 @@
       "record_dates": "2023-2024",
       "priority": "P0",
       "kind": "tree points, measurements (if access granted)",
-      "license_status": "public viewer confirmed; bulk export and downstream reuse not verified",
-      "availability": "public viewer; CSV export unverified",
+      "license_status": "existing local export used for model integration at user's request; public redistribution rights unverified",
+      "availability": "existing local CSV from the vegetation-data chat; normalized study rectangle contains 3623 standing-tree records",
+      "public_fields_verified": ["Tree ID", "Latitude", "Longitude", "Height (feet)", "Crown (feet)", "Status", "Botanical", "Common"],
       "repo_local_target": "backend/data/ucla_trees.geojson",
-      "next_action": "check viewer CSV export and permission; if available normalize lat/lon, measured height and crown spread",
-      "usable_now": false
+      "next_action": "field-validate projected shade and source completeness; resolve redistribution terms before publishing raw tree assets",
+      "usable_now": true,
+      "local_integration_status": "normalized dimensions loaded into combined building/tree scoring model; source data remains Git-ignored"
     },
     {
       "id": "ucla_urban_forest_plan",
