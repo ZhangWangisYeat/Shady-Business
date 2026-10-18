@@ -9,7 +9,7 @@ jest.mock('../src/api/client', () => ({
 }));
 jest.mock('../src/map/ShadyMap', () => ({ ShadyMap: () => null }));
 jest.mock('../src/location/heading', () => ({ useHeading: () => null, bearing: () => 0 }));
-jest.mock('../src/location/currentLocation', () => ({ currentCoordinate: jest.fn() }));
+jest.mock('../src/location/currentLocation', () => ({ currentCoordinate: jest.fn(), warmUpLocation: jest.fn(async () => {}) }));
 jest.mock('expo-status-bar', () => ({ StatusBar: () => null }));
 jest.mock('expo-location', () => ({ requestForegroundPermissionsAsync: jest.fn(), watchPositionAsync: jest.fn() }));
 

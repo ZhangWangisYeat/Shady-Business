@@ -30,4 +30,7 @@ Navigation is a tilted forward-following vector map, **not** photorealistic Stre
 - G5 tests and small field validation for the selected corridor. Explicitly distinguish **modeled direct sun** from heat safety, weather or actual temperature.
 
 ## Not in MVP
-Citywide coverage; paid AI voice; photorealistic Street View; health-risk predictions; real-time tree changes/cloud shadow forecasts; true accessibility guarantees; persistent trip records; background/locked-phone guidance.
+Citywide coverage; paid AI voice; photorealistic Street View; health-risk predictions; real-time tree changes/cloud shadow forecasts; true accessibility guarantees; persistent GPS trip records; background/locked-phone guidance.
+
+## Recent route searches
+The search panel can expand the latest five distinct POI-to-POI searches. Selecting one immediately previews its saved route choices and shade results, with original time and temperature labeled as historical. Repeating a search replaces that pair's previous snapshot. GPS guidance requires an explicit update for now; saved snapshots remain available for demo playback. Precise GPS searches are not persisted.

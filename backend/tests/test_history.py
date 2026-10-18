@@ -93,6 +93,20 @@ def test_gps_and_failed_queries_never_persist(setup_history):
     assert client.get('/api/routes/history', headers=headers).json() == {'items': []}
 
 
+def test_gps_routes_save_only_behind_the_test_switch(setup_history, monkeypatch):
+    client, headers, _ = setup_history
+    monkeypatch.setenv('ROUTE_HISTORY_INCLUDE_GPS', '1')
+    for spot in ([-118.4422, 34.0728], [-118.4430, 34.0725]):
+        body = query()
+        body['origin'] = {'coordinate': spot}
+        response = client.post('/api/routes', headers=headers, json=body)
+        assert response.headers['X-Route-History-Saved'] == 'true'
+    items = client.get('/api/routes/history', headers=headers).json()['items']
+    # both walks start at "your location", so the second replaces the first
+    assert len(items) == 1
+    assert items[0]['request']['origin'] == {'place_id': None, 'coordinate': [-118.443, 34.0725]}
+
+
 def test_storage_failure_preserves_route_and_returns_structured_read_error(setup_history, monkeypatch):
     client, headers, _ = setup_history
 

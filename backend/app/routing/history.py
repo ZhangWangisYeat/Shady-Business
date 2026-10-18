@@ -1,4 +1,4 @@
-"""Opt-in, device-scoped snapshots; never store live GPS origins."""
+"""Opt-in, device-scoped snapshots; GPS ends are only stored behind a local test switch."""
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from hashlib import sha256
@@ -47,8 +47,24 @@ def owner_hash(key: str) -> str:
     return sha256(key.encode('utf-8')).hexdigest()
 
 
+# test only, off unless you set it. normally a walk from (or to) your location
+# is never saved, because ADR-010 and the privacy rules say not to keep where
+# someone was. turning this on saves every calculated route so the list can be
+# tried out, and a GPS end is filed under "current" so walks from wherever you
+# happen to be to the same place replace each other instead of piling up.
+def saves_gps_routes() -> bool:
+    return os.environ.get('ROUTE_HISTORY_INCLUDE_GPS') == '1'
+
+
+def endpoint_key(endpoint) -> str | None:
+    if endpoint.place_id is not None:
+        return endpoint.place_id
+    return 'current' if saves_gps_routes() else None
+
+
 def save(key: str, request: RouteRequest, result: RoutesResponse) -> bool:
-    if request.origin.place_id is None or request.destination.place_id is None:
+    origin, destination = endpoint_key(request.origin), endpoint_key(request.destination)
+    if origin is None or destination is None:
         return False
     snapshot = SavedRoute(id=str(uuid4()), saved_at=datetime.now(timezone.utc),
                           request=request, result=result)
@@ -57,10 +73,9 @@ def save(key: str, request: RouteRequest, result: RoutesResponse) -> bool:
         # Serialize read/replace/prune across concurrent requests and processes.
         connection.execute('BEGIN IMMEDIATE')
         connection.execute('DELETE FROM route_history WHERE owner=? AND origin=? AND destination=?',
-                           (owner, request.origin.place_id, request.destination.place_id))
+                           (owner, origin, destination))
         connection.execute('INSERT INTO route_history(owner,id,origin,destination,snapshot) VALUES(?,?,?,?,?)',
-                           (owner, snapshot.id, request.origin.place_id,
-                            request.destination.place_id, snapshot.model_dump_json()))
+                           (owner, snapshot.id, origin, destination, snapshot.model_dump_json()))
         connection.execute('''DELETE FROM route_history WHERE owner=? AND sequence NOT IN
             (SELECT sequence FROM route_history WHERE owner=? ORDER BY sequence DESC LIMIT 5)''',
                            (owner, owner))

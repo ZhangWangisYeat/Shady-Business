@@ -40,12 +40,15 @@ export type RoutesResponse = {
   routes: Route[];
 };
 
+export type SavedEnd = { place_id: string; coordinate: null } | { place_id: null; coordinate: Coordinate };
+
 export type SavedRoute = {
   id: string;
   saved_at: string;
   request: {
-    origin: { place_id: string; coordinate: null };
-    destination: { place_id: string; coordinate: null };
+    // a gps end only shows up when the backend's ROUTE_HISTORY_INCLUDE_GPS test switch is on
+    origin: SavedEnd;
+    destination: SavedEnd;
     departure_time: string;
     temperature_c: number;
   };

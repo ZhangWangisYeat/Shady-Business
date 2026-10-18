@@ -85,6 +85,10 @@ coverage.xml
 *.sqlite3
 
 # Logs and editor / OS state
+/.verification-tmp-shade-20261017/history-avd/
+/.verification-tmp-shade-20261017/history-android.bundle
+/.verification-tmp-shade-20261017/ndk-connection-check.bin
+/.verification-tmp-shade-20261017/ndk/
 *.log
 npm-debug.log*
 yarn-debug.log*

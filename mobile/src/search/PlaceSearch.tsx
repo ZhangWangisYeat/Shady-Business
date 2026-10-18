@@ -15,15 +15,20 @@ type Props = {
   destination: StartPoint;
   onSelect: (field: Field, value: StartPoint) => void;
   onSwap: () => void;
+  // the logo is the way home: back to "Where to?" from wherever you are
+  onHome?: () => void;
   onFocusChange: (focused: boolean) => void;
+  // places you've walked to lately, offered before you type
+  recent?: Place[];
 };
 
 const PLACEHOLDER: Record<Field, string> = { origin: 'Choose starting point', destination: 'Choose destination' };
 const CURRENT_LABEL = 'Your location';
 const label = (value: StartPoint) => value === 'current' ? CURRENT_LABEL : value?.name ?? '';
 const keyOf = (value: StartPoint) => value === 'current' ? 'current' : value?.id ?? '';
+const meta = (place: Place) => (place.address ? `${place.category} @ ${place.address}` : place.category);
 
-export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChange }: Props) {
+export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChange, recent = [], onHome }: Props) {
   const [text, setText] = useState<Record<Field, string>>({ origin: label(origin), destination: label(destination) });
   const [focus, setFocus] = useState<Field | null>(null);
   const [results, setResults] = useState<Place[]>([]);
@@ -58,6 +63,8 @@ export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChan
     return () => clearTimeout(timer);
   }, [focus, query]);
 
+  // a place already in one of the boxes would only route to itself
+  const recents = recent.filter(place => place.id !== keyOf(origin) && place.id !== keyOf(destination));
   const focusField = (field: Field | null) => { focusRef.current = field; setFocus(field); onFocusChange(field !== null); };
   const blur = (field: Field) => {
     // if you wander off without picking anything, put back what was selected
@@ -75,6 +82,14 @@ export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChan
     setResults([]);
     if (field === 'origin' && !destination) inputs.destination.current?.focus();
     else { Keyboard.dismiss(); inputs[field].current?.blur(); focusField(null); }
+  };
+  // close any open box first, otherwise its blur would put the old text back
+  // and the dropdown would stay open over the home screen
+  const goHome = () => {
+    Keyboard.dismiss();
+    if (focus) inputs[focus].current?.blur();
+    focusField(null);
+    onHome?.();
   };
   const clear = (field: Field) => {
     onSelect(field, null);
@@ -109,7 +124,9 @@ export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChan
         {/* the logo lives in the card's top right, level with the start row, so
             branding doesn't cost a row of map. swap sits by the destination row. */}
         <View style={styles.side}>
-          <View style={styles.slot}><Image source={LOGO} style={styles.logo} accessibilityLabel="Shady Business" /></View>
+          <TouchableOpacity style={styles.slot} onPress={goHome} accessibilityRole="button" accessibilityLabel="Shady Business, back to Where to?">
+            <Image source={LOGO} style={styles.logo} />
+          </TouchableOpacity>
           <View style={styles.slot}>
             <TouchableOpacity style={styles.swap} onPress={onSwap} accessibilityLabel="Swap start and destination">
               <Text style={styles.swapText}>⇅</Text>
@@ -125,14 +142,26 @@ export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChan
               <View><Text style={styles.resultName}>{CURRENT_LABEL}</Text><Text style={styles.resultMeta}>Walk from where you are now</Text></View>
             </TouchableOpacity>
           )}
-          {!query && <Text style={styles.hint}>Try like Powell or Bplate.</Text>}
+          {!query && !recents.length && <Text style={styles.hint}>Try like Powell or Bplate.</Text>}
           {!!query && !results.length && !searchError && <Text style={styles.hint}>No UCLA places match “{query}”.</Text>}
           {!!searchError && <Text style={styles.error}>{searchError}</Text>}
           <ScrollView keyboardShouldPersistTaps="handled" style={{ maxHeight: 300 }}>
+            {!query && recents.length > 0 && <Text style={styles.section}>Recent</Text>}
+            {/* a recent is just a place, so it fills whichever box you're in,
+                the same as picking it from search */}
+            {!query && recents.map(place => (
+              <TouchableOpacity key={place.id} style={[styles.result, styles.recentRow]} onPress={() => choose(place)} accessibilityLabel={`Recent place: ${place.name}`}>
+                <View style={styles.clock}><View style={styles.clockHour} /><View style={styles.clockMinute} /></View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.resultName} numberOfLines={1}>{place.name}</Text>
+                  <Text style={[styles.resultMeta, styles.metaLine]} numberOfLines={1}>{meta(place)}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
             {results.map(place => (
               <TouchableOpacity key={place.id} style={styles.result} onPress={() => choose(place)}>
                 <Text style={styles.resultName} numberOfLines={1}>{place.name}</Text>
-                <Text style={[styles.resultMeta, styles.metaLine]} numberOfLines={1}>{place.address ? `${place.category} @ ${place.address}` : place.category}</Text>
+                <Text style={[styles.resultMeta, styles.metaLine]} numberOfLines={1}>{meta(place)}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -160,6 +189,13 @@ const styles = StyleSheet.create({
   swap: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
   swapText: { fontSize: 22, color: COLORS.ink },
   dropdown: { borderTopWidth: 1, borderTopColor: COLORS.rule, paddingVertical: 4 },
+  recentRow: { flexDirection: 'row', alignItems: 'center' },
+  // a small clock made of views (no icon font in the app), muted so the place
+  // name stays the thing you read
+  clock: { width: 16, height: 16, borderRadius: 8, borderWidth: 1.5, borderColor: COLORS.muted, marginRight: 14 },
+  clockHour: { position: 'absolute', left: 5.75, top: 2.5, width: 1.5, height: 5, borderRadius: 1, backgroundColor: COLORS.muted },
+  clockMinute: { position: 'absolute', left: 6.5, top: 6, width: 4, height: 1.5, borderRadius: 1, backgroundColor: COLORS.muted },
+  section: { color: COLORS.muted, fontSize: 11, fontWeight: '600', letterSpacing: 2, textTransform: 'uppercase', paddingHorizontal: 16, paddingTop: 4, paddingBottom: 2 },
   hint: { color: COLORS.muted, fontSize: 13, paddingHorizontal: 16, paddingVertical: 12 },
   error: { color: COLORS.error, fontSize: 13, paddingHorizontal: 16, paddingVertical: 12 },
   result: { paddingHorizontal: 16, paddingVertical: 10 },
