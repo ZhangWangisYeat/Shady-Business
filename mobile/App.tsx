@@ -5,8 +5,9 @@ import * as Location from 'expo-location';
 import { ShadyMap } from './src/map/ShadyMap';
 import { PlaceSearch, type Field, type StartPoint } from './src/search/PlaceSearch';
 import { currentCoordinate } from './src/location/currentLocation';
+import { bearing, useHeading } from './src/location/heading';
 import { getRoutes } from './src/api/client';
-import type { Coordinate, Route, RouteEndpoint, RoutesResponse, ShadeState } from './src/api/types';
+import type { Coordinate, Place, Route, RouteEndpoint, RoutesResponse, ShadeState } from './src/api/types';
 import { interpolateRoute, locateOnRoute, statusByTimeFraction } from './src/navigation/progress';
 import { MANEUVER_ICON, formatDistance, stepProgress } from './src/navigation/steps';
 import { COLORS } from './src/theme';
@@ -27,7 +28,9 @@ export default function App() {
   // any other start is planning ahead: same routes and directions, but no
   // Start/Demo walk, since you can't be guided along a path you aren't on.
   const [origin, setOrigin] = useState<StartPoint>('current');
-  const [destination, setDestination] = useState<Exclude<StartPoint, 'current'>>(null);
+  // the destination can be 'current' too, but only by swapping: that previews
+  // the way back to where you are from some other place
+  const [destination, setDestination] = useState<StartPoint>(null);
   const [here, setHere] = useState<Coordinate | null>(null);
   const [locating, setLocating] = useState(false);
   const [retry, setRetry] = useState(0);
@@ -40,6 +43,9 @@ export default function App() {
   const [revealed, setRevealed] = useState(false);
   const [chosen, setChosen] = useState<Route['mode']>('recommended');
   const [showDirections, setShowDirections] = useState(false);
+  const [walkSteps, setWalkSteps] = useState(false);
+  // a small bar with just shade and time, so the map gets nearly the whole screen
+  const [compact, setCompact] = useState(false);
   const [error, setError] = useState('');
   const [progress, setProgress] = useState(0);
   const [position, setPosition] = useState<Coordinate | null>(null);
@@ -51,9 +57,20 @@ export default function App() {
   const interval = useRef<ReturnType<typeof setInterval> | null>(null);
   const requestId = useRef(0);
   const active = routes?.routes.find(r => r.mode === chosen) ?? null;
+  // the compass only runs while the blue dot is on screen
+  const deviceHeading = useHeading(stage === 'navigate' ? !demo : (origin === 'current' || destination === 'current') && here !== null);
+  // a demo walk has no real phone to turn, so the dot faces along the route
+  const demoHeading = stage === 'navigate' && demo && active && position
+    ? bearing(position, interpolateRoute(active, Math.min(1, progress + 0.02)))
+    : null;
   const fromHere = origin === 'current';
   const originKey = origin === 'current' ? 'current' : origin?.id ?? '';
   const originLabel = origin === 'current' ? 'Your location' : origin?.name ?? '';
+  const toHere = destination === 'current';
+  const destinationKey = destination === 'current' ? 'current' : destination?.id ?? '';
+  const destinationName = destination === 'current' ? 'Your location' : destination?.name ?? '';
+  const herePlace = (coordinate: Coordinate | null): Place | null =>
+    coordinate ? { id: 'current-location', name: 'Your location', coordinate, category: 'Current location', address: null } : null;
   const stop = () => { subscription.current?.remove(); subscription.current = null; if (interval.current) clearInterval(interval.current); interval.current = null; };
   useEffect(() => () => stop(), []);
 
@@ -63,41 +80,41 @@ export default function App() {
     setRoutes(null); setRevealed(false); setShowDirections(false); setError('');
     const id = ++requestId.current;
     if (!origin || !destination) { setCalculating(false); return; }
-    if (origin !== 'current' && origin.id === destination.id) { setCalculating(false); setError('Pick a different destination.'); return; }
+    if (originKey === destinationKey) { setCalculating(false); setError('Pick a different destination.'); return; }
     setCalculating(true);
     // the short delay means tapping the temperature a few times sends one request, not five
     const timer = setTimeout(async () => {
       try {
-        let from: RouteEndpoint;
-        if (origin === 'current') {
-          // a fresh fix for every route, because you may have walked a block
-          // since the last one and the route should start where you are now.
+        // a fresh fix for every route, because you may have walked a block
+        // since the last one and the route should start (or end) where you are now
+        let coordinate: Coordinate | null = null;
+        if (origin === 'current' || destination === 'current') {
           setLocating(true);
-          const coordinate = await currentCoordinate().finally(() => setLocating(false));
+          coordinate = await currentCoordinate().finally(() => setLocating(false));
           if (id !== requestId.current) return;
           setHere(coordinate);
-          from = { coordinate };
-        } else from = { place_id: origin.id };
-        const response = await getRoutes(from, { place_id: destination.id }, temp);
+        }
+        const endpoint = (end: Place | 'current'): RouteEndpoint => (end === 'current' ? { coordinate: coordinate! } : { place_id: end.id });
+        const response = await getRoutes(endpoint(origin), endpoint(destination), temp);
         if (id === requestId.current) { setRoutes(response); setChosen('recommended'); }
       } catch (e) {
         if (id !== requestId.current) return;
         // a failed fix means we don't know where you are any more, so the old
         // blue dot (and a route fit around it) would be lying.
-        if (origin === 'current') setHere(null);
+        if (origin === 'current' || destination === 'current') setHere(null);
         setError(e instanceof Error ? e.message : 'Could not calculate route.');
       } finally {
         if (id === requestId.current) setCalculating(false);
       }
     }, 250);
     return () => clearTimeout(timer);
-  }, [originKey, destination?.id, temp, retry]);
+  }, [originKey, destinationKey, temp, retry]);
 
   const select = (field: Field, value: StartPoint) => {
     if (field === 'origin') setOrigin(value);
-    else setDestination(value === 'current' ? null : value);
+    else setDestination(value);
   };
-  const swap = () => { if (origin !== 'current') { setOrigin(destination); setDestination(origin); } };
+  const swap = () => { setOrigin(destination); setDestination(origin); };
   const pick = (mode: Route['mode']) => { setChosen(mode); setPosition(null); setProgress(0); };
   const complete = () => { stop(); setStage('arrived'); };
   const startDemo = () => {
@@ -122,7 +139,7 @@ export default function App() {
       });
     } catch (e) { setError(e instanceof Error ? e.message : 'GPS unavailable'); setStage('plan'); stop(); }
   };
-  const endNavigation = () => { stop(); setStage('plan'); setPosition(null); setProgress(0); };
+  const endNavigation = () => { stop(); setWalkSteps(false); setCompact(false); setStage('plan'); setPosition(null); setProgress(0); };
   const reset = () => { stop(); setStage('plan'); setOrigin('current'); setDestination(null); setPosition(null); setProgress(0); setShade('unknown'); setError(''); };
 
   const Button = ({ text, onPress, primary = true, style }: { text: string, onPress: () => void, primary?: boolean, style?: object }) =>
@@ -136,7 +153,7 @@ export default function App() {
     return e.sunPct === null ? <Stat value="—" label="Sun" /> : <Stat value={`${e.sunPct}%`} label={e.unknownPct ? `Sun, ${e.unknownPct}% unknown` : 'Sun'} />;
   };
   const minutes = (seconds: number) => Math.max(1, Math.ceil(seconds / 60));
-  const arriveText = `Arrive at ${destination?.name ?? 'your destination'}`;
+  const arriveText = `Arrive at ${destinationName || 'your destination'}`;
   const tempRow = <View style={styles.tempRow}>
     <Text style={styles.eyebrow}>Temperature</Text>
     <View style={styles.tempControls}>
@@ -160,19 +177,20 @@ export default function App() {
     </>;
     if (calculating || (!routes && !error) || (routes && !revealed)) return <>
       <Text style={styles.eyebrow}>{fromHere && locating ? 'Finding you' : 'Finding routes'}</Text>
-      <Text style={styles.heading} numberOfLines={1}>{destination.name}</Text>
+      <Text style={styles.heading} numberOfLines={1}>{destinationName}</Text>
       <View style={styles.loadingRow}><ActivityIndicator color={COLORS.ink} /><Text style={[styles.muted, { marginLeft: 10, flex: 1 }]} numberOfLines={1}>From {originLabel.toLowerCase() === 'your location' ? 'your location' : originLabel}</Text></View>
     </>;
     if (!routes || !active) return <>
       <Text style={styles.eyebrow}>No route</Text>
-      <Text style={styles.heading} numberOfLines={1}>{destination.name}</Text>
+      <Text style={styles.heading} numberOfLines={1}>{destinationName}</Text>
       <TouchableOpacity style={styles.link} onPress={() => setRetry(n => n + 1)}><Text style={styles.linkText}>Try again</Text></TouchableOpacity>
     </>;
     const previewNote = <Text style={styles.previewNote}>Preview only. Guided walks start from your location.</Text>;
-    const walkFromHere = <TouchableOpacity style={styles.link} onPress={() => setOrigin('current')}><Text style={styles.linkText}>Walk there from my location</Text></TouchableOpacity>;
+    // previewing the way back to you, the guided version is the same trip the other way round
+    const walkFromHere = <TouchableOpacity style={styles.link} onPress={() => (toHere ? swap() : setOrigin('current'))}><Text style={styles.linkText}>{toHere ? 'Walk from my location instead' : 'Walk there from my location'}</Text></TouchableOpacity>;
     if (showDirections) return <>
       <Text style={styles.eyebrow}>Directions</Text>
-      <Text style={styles.heading} numberOfLines={1}>{destination.name}</Text>
+      <Text style={styles.heading} numberOfLines={1}>{destinationName}</Text>
       <View style={styles.stats}>
         <Stat value={`${minutes(active.duration_s)}`} label="Min" />
         <Stat value={formatDistance(active.distance_m)} label="Distance" />
@@ -193,7 +211,7 @@ export default function App() {
     const ordered = [...routes.routes].sort((a, b) => MODE_ORDER.indexOf(a.mode) - MODE_ORDER.indexOf(b.mode));
     return <>
       <Text style={styles.eyebrow}>{fromHere ? 'Walking to' : 'Route preview'}</Text>
-      <Text style={styles.heading} numberOfLines={1}>{destination.name}</Text>
+      <Text style={styles.heading} numberOfLines={1}>{destinationName}</Text>
       <Text style={styles.muted}>{routes.conditions.shade_model === 'unavailable' ? 'No shade data yet, so the three options may be the same path.' : 'Sun is modeled from building and tree data, not measured live.'}</Text>
       <View style={styles.routeList}>
         {ordered.map(route => {
@@ -231,8 +249,20 @@ export default function App() {
 
   const navigate = () => {
     const at = active ? stepProgress(active.steps, progress * active.distance_m) : null;
+    const minutesLeft = Math.max(0, Math.ceil((active?.duration_s ?? 0) * (1 - progress) / 60));
+    if (compact) return <TouchableOpacity style={styles.compactBar} onPress={() => setCompact(false)} accessibilityLabel="Show walk details">
+      <View style={[styles.shadeChip, { backgroundColor: COLORS[shade] }]} />
+      <Text style={styles.compactText}>{statusText[shade]}</Text>
+      <Text style={[styles.compactText, { marginLeft: 'auto' }]}>{minutesLeft} min left</Text>
+      <Text style={styles.chevron}>⌃</Text>
+    </TouchableOpacity>;
     return <>
-      <Text style={styles.eyebrow}>{demo ? 'Demo walk' : 'Walking'}</Text>
+      <View style={styles.eyebrowRow}>
+        <Text style={styles.eyebrow}>{demo ? 'Demo walk' : 'Walking'}</Text>
+        <TouchableOpacity hitSlop={12} onPress={() => { setWalkSteps(false); setCompact(true); }} accessibilityLabel="Hide walk details">
+          <Text style={styles.chevron}>⌄</Text>
+        </TouchableOpacity>
+      </View>
       {at?.next && <View style={styles.nextRow}>
         <Text style={styles.nextIcon}>{MANEUVER_ICON[at.next.maneuver]}</Text>
         <View style={{ flex: 1 }}>
@@ -242,19 +272,36 @@ export default function App() {
       </View>}
       <View style={styles.stats}>
         <Stat value={statusText[shade]} label="Right now" />
-        <Stat value={`${Math.max(0, Math.ceil((active?.duration_s ?? 0) * (1 - progress) / 60))}`} label="Min left" />
+        <Stat value={`${minutesLeft}`} label="Min left" />
         <Stat value={`${Math.floor(progress * 100)}%`} label="Done" />
       </View>
-      {shade === 'unknown' && <Text style={styles.muted}>No shade estimate here, or your position is uncertain.</Text>}
-      <Button text="End walk" primary={false} onPress={endNavigation} />
+      {shade === 'unknown' && !walkSteps && <Text style={styles.muted}>No shade estimate here, or your position is uncertain.</Text>}
+      {walkSteps && active && <ScrollView style={styles.walkSteps}>
+        {active.steps.map((step, i) => {
+          // steps up to the current one are behind you; the one after it is
+          // the turn you're walking toward
+          const done = !!at && i <= at.current;
+          const upcoming = !!at && i === at.current + 1;
+          return <View key={i} style={styles.step}>
+            <Text style={[styles.stepIcon, done && styles.stepDone]}>{MANEUVER_ICON[step.maneuver]}</Text>
+            <Text style={[styles.stepText, done && styles.stepDone, upcoming && styles.stepNext]}>{step.maneuver === 'arrive' ? arriveText : step.instruction}</Text>
+            {step.distance_m > 0 && <Text style={[styles.stepDistance, done && styles.stepDone]}>{formatDistance(step.distance_m)}</Text>}
+          </View>;
+        })}
+      </ScrollView>}
+      <View style={styles.buttonRow}>
+        <Button text={walkSteps ? 'Hide directions' : 'Directions'} primary={false} style={{ flex: 1 }} onPress={() => setWalkSteps(v => !v)} />
+        <Button text="End walk" primary={false} style={{ flex: 1 }} onPress={endNavigation} />
+      </View>
     </>;
   };
 
   return <View style={styles.root}><StatusBar style="dark" />
-    <ShadyMap routes={routes?.routes ?? []} activeMode={active ? chosen : null} destination={destination}
-      origin={origin === 'current' ? (here ? { id: 'current-location', name: 'Your location', coordinate: here, category: 'Current location', address: null } : null) : origin}
-      originIsCurrent={fromHere}
+    <ShadyMap routes={routes?.routes ?? []} activeMode={active ? chosen : null}
+      origin={origin === 'current' ? herePlace(here) : origin} originIsCurrent={fromHere}
+      destination={destination === 'current' ? herePlace(here) : destination} destinationIsCurrent={toHere}
       position={position} navigating={stage === 'navigate'} calculating={calculating} onDrawn={() => setRevealed(true)}
+      heading={demo && stage === 'navigate' ? demoHeading : deviceHeading}
       insets={{ top: stage === 'plan' ? TOP_INSET + cardHeight : TOP_INSET, bottom: sheetHeight }} />
     <View style={[styles.safe, { paddingTop: TOP_INSET }]} pointerEvents="box-none">
       {stage === 'plan' && <View onLayout={e => setCardHeight(e.nativeEvent.layout.height + 8)}>
@@ -266,16 +313,16 @@ export default function App() {
         {stage === 'navigate' && navigate()}
         {stage === 'arrived' && <>
           <Text style={styles.eyebrow}>Arrived</Text>
-          <Text style={styles.heading} numberOfLines={1}>{destination?.name ?? 'Destination'}</Text>
+          <Text style={styles.heading} numberOfLines={1}>{destinationName || 'Destination'}</Text>
           <Text style={styles.muted}>{demo ? 'Demo walk complete.' : 'You made it.'}</Text>
           <Button text="Plan another walk" onPress={reset} />
         </>}
-        {!!error && <Text style={styles.error}>{error}</Text>}
-        <View style={styles.legend}>
+        {!!error && !(stage === 'navigate' && compact) && <Text style={styles.error}>{error}</Text>}
+        {!(stage === 'navigate' && compact) && <View style={styles.legend}>
           {([['shade', 'Shade'], ['sun', 'Sun'], ['unknown', 'Unknown']] as const).map(([key, text]) =>
             <View key={key} style={styles.legendItem}><View style={[styles.swatch, { backgroundColor: COLORS[key] }]} /><Text style={styles.legendText}>{text}</Text></View>)}
           <Text style={[styles.legendText, { marginLeft: 'auto' }]}>Estimates only</Text>
-        </View>
+        </View>}
       </View>}
     </View>
   </View>;
@@ -310,6 +357,13 @@ const styles = StyleSheet.create({
   steps: { maxHeight: 280, marginTop: 6, borderTopWidth: 1, borderTopColor: COLORS.rule },
   step: { flexDirection: 'row', alignItems: 'center', paddingVertical: 11, borderBottomWidth: 1, borderBottomColor: COLORS.rule },
   stepIcon: { width: 26, fontSize: 16, color: COLORS.ink }, stepText: { flex: 1, color: COLORS.ink, fontSize: 14 },
+  eyebrowRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  chevron: { fontSize: 20, color: COLORS.ink, paddingHorizontal: 6, lineHeight: 22 },
+  compactBar: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 2 },
+  compactText: { fontSize: 17, fontWeight: '700', color: COLORS.ink },
+  shadeChip: { width: 12, height: 12, borderRadius: 2 },
+  walkSteps: { maxHeight: 220, marginTop: 4, borderTopWidth: 1, borderTopColor: COLORS.rule },
+  stepDone: { color: COLORS.muted, opacity: 0.6 }, stepNext: { fontWeight: '700' },
   stepDistance: { color: COLORS.muted, fontSize: 12, marginLeft: 12 },
   nextRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8, marginBottom: 4 }, nextIcon: { fontSize: 30, color: COLORS.ink, width: 40 }, nextText: { fontSize: 19, fontWeight: '700', color: COLORS.ink },
   link: { alignSelf: 'center', padding: 8, marginTop: 2 }, linkText: { color: COLORS.ink, fontSize: 13, fontWeight: '600', textDecorationLine: 'underline' },

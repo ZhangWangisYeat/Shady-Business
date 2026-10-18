@@ -10,7 +10,7 @@ export type Field = 'origin' | 'destination';
 export type StartPoint = Place | 'current' | null;
 type Props = {
   origin: StartPoint;
-  destination: Place | null;
+  destination: StartPoint;
   onSelect: (field: Field, value: StartPoint) => void;
   onSwap: () => void;
   onFocusChange: (focused: boolean) => void;
@@ -82,7 +82,7 @@ export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChan
 
   const row = (field: Field) => (
     <View style={styles.row}>
-      <View style={[styles.marker, field === 'destination' && styles.markerEnd, field === 'origin' && origin === 'current' && styles.markerHere]} />
+      <View style={[styles.marker, field === 'destination' && styles.markerEnd, (field === 'origin' ? origin : destination) === 'current' && styles.markerHere]} />
       <TextInput
         ref={inputs[field]} style={styles.input} value={text[field]} placeholder={PLACEHOLDER[field]}
         placeholderTextColor={COLORS.muted} selectTextOnFocus autoCorrect={false} returnKeyType="search"
@@ -104,14 +104,13 @@ export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChan
           <View style={styles.rule} />
           {row('destination')}
         </View>
-        {/* your location can't be a destination, so there's nothing to swap with */}
-        <TouchableOpacity style={[styles.swap, origin === 'current' && { opacity: 0.25 }]} disabled={origin === 'current'} onPress={onSwap} accessibilityLabel="Swap start and destination">
+        <TouchableOpacity style={styles.swap} onPress={onSwap} accessibilityLabel="Swap start and destination">
           <Text style={styles.swapText}>⇅</Text>
         </TouchableOpacity>
       </View>
       {focus && (
         <View style={styles.dropdown}>
-          {focus === 'origin' && origin !== 'current' && (
+          {focus === 'origin' && origin !== 'current' && destination !== 'current' && (
             <TouchableOpacity style={[styles.result, styles.hereRow]} onPress={() => choose('current')}>
               <View style={[styles.marker, styles.markerHere]} />
               <View><Text style={styles.resultName}>{CURRENT_LABEL}</Text><Text style={styles.resultMeta}>Walk from where you are now</Text></View>
