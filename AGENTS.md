@@ -72,10 +72,13 @@ Then set `hw.gpu.enabled=yes`, `hw.gpu.mode=host`, `hw.keyboard=yes` and `hw.ram
 - Stopping a wrapper shell doesn't kill Metro's `node.exe`. Free port 8081 by killing the PID from `netstat -ano | findstr :8081`.
 
 **7. Smoke test (G0/G1 behaviors).** Drive the app with `adb shell input tap X Y`, using screen pixels on the 1080×2400 Pixel 8. Check each step with `adb exec-out screencap -p > shot.png`. If the dev-menu sheet appears on first launch, dismiss it. Expected results:
-- (a) Tapping **Choose starting point** and typing `royce` lists Royce Hall above Royce Drive, with "Places © OpenStreetMap contributors". Type with one `adb shell input text` call per letter: Gboard drops the first letters of a fast burst. If text lands in a Google search screen, Gboard's search toggle (magnifier on its floating toolbar) is on; turn it off.
-- (b) Royce Hall → `ackerman` → Ackerman Union starts the search on its own. A dashed line animates on the map, then three cards of about 8 min appear. Recommended and Most shade show "same path" and "Sun exposure unknown" until shade data exists. **Directions** lists steps ending "Arrive at Ackerman Union".
+- Before (a), put the emulator on campus with `adb emu geo fix -118.4426 34.0722`. The start box should read **Your location** with a blue dot.
+- (a) Tapping the start box and typing `royce` lists Royce Hall above Royce Drive, with "Places © OpenStreetMap contributors". Type with one `adb shell input text` call per letter: Gboard drops the first letters of a fast burst. If text lands in a Google search screen, Gboard's search toggle (magnifier on its floating toolbar) is on; turn it off.
+- (b) With the start left as Your location, choose `ackerman` → Ackerman Union. The location prompt appears; tap **While using the app**. A dashed line animates from the blue dot, then three cards of about 5 min appear with **Start**, **Directions** and **Demo walk**. Recommended and Most shade show "same path" and "Sun exposure unknown" until shade data exists. **Directions** lists steps ending "Arrive at Ackerman Union".
+- (b2) Change the start to Royce Hall. The sheet shows **Route preview** with Directions only, plus "Walk there from my location".
+- (b3) Run `adb emu geo fix -118.4912 34.0195` (Santa Monica), then tap "Walk there from my location". It shows "You're not on the UCLA campus…". Reset the location with the campus `geo fix` above.
 - (c) **Demo walk** counts % up, shows "Shade unknown", and ends at "You've arrived ✓".
 - (d) **Plan another walk** returns to search.
-- (e) **Start** → **Don't allow** shows "Location permission denied. Use Demo Walk instead." with no crash.
+- (e) Run `adb shell pm revoke com.shadybusiness.app android.permission.ACCESS_FINE_LOCATION`, relaunch and choose a destination. **Don't allow** shows "Location permission denied. Choose a starting point to preview routes instead." with no crash.
 - For an allowed-GPS test: `adb shell pm grant com.shadybusiness.app android.permission.ACCESS_FINE_LOCATION`, then `adb emu geo fix -118.4422 34.0729` (longitude first).
 - Report each check as PASS/FAIL/NOT RUN. Map rendering is NOT RUN without a token. A physical phone is still required for G0 sign-off.

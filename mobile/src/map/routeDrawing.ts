@@ -40,8 +40,3 @@ export function revealSegments(segments: RouteSegment[], fraction: number): Segm
   });
   return features;
 }
-
-export function boundsOf(points: Coordinate[]): { ne: Coordinate; sw: Coordinate } {
-  const lons = points.map(p => p[0]), lats = points.map(p => p[1]);
-  return { ne: [Math.max(...lons), Math.max(...lats)], sw: [Math.min(...lons), Math.min(...lats)] };
-}

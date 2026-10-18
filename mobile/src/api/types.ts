@@ -1,6 +1,7 @@
 export type Coordinate = [number, number]; // WGS84 [longitude, latitude]
 export type LineString = { type: 'LineString'; coordinates: Coordinate[] };
 export type Place = { id: string; name: string; coordinate: Coordinate; category: string; address: string | null };
+export type RouteEndpoint = { place_id: string } | { coordinate: Coordinate };
 export type PlacesResponse = { places: Place[]; attribution: string };
 export type ShadeState = 'shade' | 'sun' | 'unknown';
 export type RouteSegment = {

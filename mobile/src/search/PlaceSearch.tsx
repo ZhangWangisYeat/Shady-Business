@@ -5,18 +5,24 @@ import type { Place } from '../api/types';
 import { COLORS } from '../theme';
 
 export type Field = 'origin' | 'destination';
+// 'current' means "start from wherever my phone is", which usually isn't any
+// named place (you might be halfway down Bruin Walk), so it isn't a Place.
+export type StartPoint = Place | 'current' | null;
 type Props = {
-  origin: Place | null;
+  origin: StartPoint;
   destination: Place | null;
-  onSelect: (field: Field, place: Place | null) => void;
+  onSelect: (field: Field, value: StartPoint) => void;
   onSwap: () => void;
   onFocusChange: (focused: boolean) => void;
 };
 
 const PLACEHOLDER: Record<Field, string> = { origin: 'Choose starting point', destination: 'Choose destination' };
+const CURRENT_LABEL = 'Your location';
+const label = (value: StartPoint) => value === 'current' ? CURRENT_LABEL : value?.name ?? '';
+const keyOf = (value: StartPoint) => value === 'current' ? 'current' : value?.id ?? '';
 
 export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChange }: Props) {
-  const [text, setText] = useState<Record<Field, string>>({ origin: origin?.name ?? '', destination: destination?.name ?? '' });
+  const [text, setText] = useState<Record<Field, string>>({ origin: label(origin), destination: label(destination) });
   const [focus, setFocus] = useState<Field | null>(null);
   const [results, setResults] = useState<Place[]>([]);
   const [attribution, setAttribution] = useState('');
@@ -25,15 +31,18 @@ export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChan
   const inputs = { origin: useRef<TextInput>(null), destination: useRef<TextInput>(null) };
   // blur events land after the parent re-renders (or sometimes before), so the
   // handlers read these refs instead of whatever props were captured back then.
-  const selected = useRef<Record<Field, Place | null>>({ origin, destination });
+  const selected = useRef<Record<Field, StartPoint>>({ origin, destination });
   selected.current = { origin, destination };
   const focusRef = useRef<Field | null>(null);
 
   // the parent changes the selection on swap and reset, so the boxes follow it.
   // typing never changes the ids, so this doesn't stomp on what you're typing.
-  useEffect(() => { setText({ origin: origin?.name ?? '', destination: destination?.name ?? '' }); }, [origin?.id, destination?.id]);
+  useEffect(() => { setText({ origin: label(origin), destination: label(destination) }); }, [keyOf(origin), keyOf(destination)]);
 
-  const query = focus ? text[focus].trim() : '';
+  // a freshly focused box still holds the selected name ("Your location", "Royce
+  // Hall"), and searching for that would just show "no matches" or itself.
+  const typed = focus ? text[focus].trim() : '';
+  const query = focus && typed === label(selected.current[focus]) ? '' : typed;
   useEffect(() => {
     if (!focus || !query) { setResults([]); setSearchError(''); return; }
     // responses can come back out of order on a slow connection, so only the
@@ -51,16 +60,16 @@ export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChan
   const blur = (field: Field) => {
     // if you wander off without picking anything, put back what was selected
     // rather than leaving half-typed text that doesn't match the route.
-    setText(t => ({ ...t, [field]: selected.current[field]?.name ?? '' }));
+    setText(t => ({ ...t, [field]: label(selected.current[field]) }));
     // when focus hops from start to destination the new field may already own
     // focus by now, and then this blur shouldn't close the dropdown.
     if (focusRef.current === field) focusField(null);
   };
-  const choose = (place: Place) => {
+  const choose = (place: Place | 'current') => {
     if (!focus) return;
     const field = focus;
     onSelect(field, place);
-    setText(t => ({ ...t, [field]: place.name }));
+    setText(t => ({ ...t, [field]: label(place) }));
     setResults([]);
     if (field === 'origin' && !destination) inputs.destination.current?.focus();
     else { Keyboard.dismiss(); inputs[field].current?.blur(); focusField(null); }
@@ -73,7 +82,7 @@ export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChan
 
   const row = (field: Field) => (
     <View style={styles.row}>
-      <View style={[styles.marker, field === 'destination' && styles.markerEnd]} />
+      <View style={[styles.marker, field === 'destination' && styles.markerEnd, field === 'origin' && origin === 'current' && styles.markerHere]} />
       <TextInput
         ref={inputs[field]} style={styles.input} value={text[field]} placeholder={PLACEHOLDER[field]}
         placeholderTextColor={COLORS.muted} selectTextOnFocus autoCorrect={false} returnKeyType="search"
@@ -95,20 +104,27 @@ export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChan
           <View style={styles.rule} />
           {row('destination')}
         </View>
-        <TouchableOpacity style={styles.swap} onPress={onSwap} accessibilityLabel="Swap start and destination">
+        {/* your location can't be a destination, so there's nothing to swap with */}
+        <TouchableOpacity style={[styles.swap, origin === 'current' && { opacity: 0.25 }]} disabled={origin === 'current'} onPress={onSwap} accessibilityLabel="Swap start and destination">
           <Text style={styles.swapText}>⇅</Text>
         </TouchableOpacity>
       </View>
       {focus && (
         <View style={styles.dropdown}>
-          {!query && <Text style={styles.hint}>Try “Powell”, “Kerckhoff”, “bplate” or “Pauley”.</Text>}
+          {focus === 'origin' && origin !== 'current' && (
+            <TouchableOpacity style={[styles.result, styles.hereRow]} onPress={() => choose('current')}>
+              <View style={[styles.marker, styles.markerHere]} />
+              <View><Text style={styles.resultName}>{CURRENT_LABEL}</Text><Text style={styles.resultMeta}>Walk from where you are now</Text></View>
+            </TouchableOpacity>
+          )}
+          {!query && <Text style={styles.hint}>Try like Powell or Bplate.</Text>}
           {!!query && !results.length && !searchError && <Text style={styles.hint}>No UCLA places match “{query}”.</Text>}
           {!!searchError && <Text style={styles.error}>{searchError}</Text>}
           <ScrollView keyboardShouldPersistTaps="handled" style={{ maxHeight: 300 }}>
             {results.map(place => (
               <TouchableOpacity key={place.id} style={styles.result} onPress={() => choose(place)}>
                 <Text style={styles.resultName} numberOfLines={1}>{place.name}</Text>
-                <Text style={styles.resultMeta} numberOfLines={1}>{[place.category, place.address].filter(Boolean).join(' · ')}</Text>
+                <Text style={[styles.resultMeta, styles.metaLine]} numberOfLines={1}>{place.address ? `${place.category} @ ${place.address}` : place.category}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -120,11 +136,13 @@ export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChan
 }
 
 const styles = StyleSheet.create({
-  card: { marginHorizontal: 12, marginTop: 8, backgroundColor: COLORS.paper, borderRadius: 16, elevation: 8, overflow: 'hidden' },
+  card: { marginHorizontal: 12, marginTop: 8, backgroundColor: COLORS.paper, borderRadius: 6, elevation: 8, overflow: 'hidden' },
   fields: { flexDirection: 'row', alignItems: 'center', paddingLeft: 14, paddingRight: 6, paddingVertical: 4 },
   row: { flexDirection: 'row', alignItems: 'center', height: 46 },
   marker: { width: 12, height: 12, borderRadius: 6, borderWidth: 2.5, borderColor: COLORS.ink, marginRight: 12 },
   markerEnd: { backgroundColor: COLORS.ink },
+  markerHere: { backgroundColor: COLORS.here, borderColor: COLORS.here },
+  hereRow: { flexDirection: 'row', alignItems: 'center' },
   input: { flex: 1, fontSize: 16, color: COLORS.ink, paddingVertical: 0 },
   clear: { fontSize: 15, color: COLORS.muted, paddingHorizontal: 8 },
   rule: { height: 1, backgroundColor: COLORS.rule, marginLeft: 24 },
@@ -135,6 +153,7 @@ const styles = StyleSheet.create({
   error: { color: COLORS.error, fontSize: 13, paddingHorizontal: 16, paddingVertical: 12 },
   result: { paddingHorizontal: 16, paddingVertical: 10 },
   resultName: { fontSize: 15, fontWeight: '600', color: COLORS.ink },
-  resultMeta: { fontSize: 12, color: COLORS.muted, marginTop: 2 },
+  resultMeta: { fontSize: 12, color: COLORS.muted },
+  metaLine: { marginTop: 2 },
   attribution: { fontSize: 10, color: COLORS.muted, paddingHorizontal: 16, paddingVertical: 6, textAlign: 'right' },
 });

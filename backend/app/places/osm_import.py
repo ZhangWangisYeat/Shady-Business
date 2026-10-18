@@ -140,3 +140,65 @@ def normalize(elements: list[dict]) -> list[dict]:
         place["id"] = base if used[base] == 1 else f"{base}-{used[base]}"
         place["coordinate"] = list(place["coordinate"])
     return [{k: p[k] for k in ("id", "name", "coordinate", "category", "address", "aliases")} for p in places]
+
+
+# --- filling in addresses ---------------------------------------------------
+# only ~1 in 5 named places carries its own addr:* tags, but OSM often puts the
+# address on the building outline or on a separate point beside the name.
+NEAREST_ADDRESS_M = 15.0
+# 15 m because at 20-30 m it started handing out the neighbour's address
+# (Engineering V picked up 520 Portola Plaza, which is the building next door).
+NO_ADDRESS = {"Street", "Walkway", "Stairs"}
+# a statue or garden sitting next to a building isn't "at" that building's
+# address, so these only get one if they're actually inside the outline.
+NO_NEARBY_ADDRESS = {"Artwork", "Garden", "Plaza", "Landmark"}
+
+
+def _local_xy(lon: float, lat: float) -> tuple[float, float]:
+    # flat meters around campus; fine for distances of a few hundred meters
+    return ((lon - CAMPUS_CENTER[0]) * 111_320.0 * cos(radians(CAMPUS_CENTER[1])), (lat - CAMPUS_CENTER[1]) * 111_320.0)
+
+
+def _address_shapes(elements: list[dict]) -> list[tuple[object, str]]:
+    """Shapes from an Overpass `out tags geom` response, each with its address."""
+    from shapely.geometry import Point, Polygon
+    shapes = []
+    for element in elements:
+        label = address(element.get("tags", {}))
+        if not label or not element.get("tags", {}).get("addr:housenumber"):
+            continue
+        rings = []
+        if element.get("type") == "node" and "lon" in element:
+            shapes.append((Point(*_local_xy(element["lon"], element["lat"])), label))
+        elif element.get("type") == "way":
+            rings = [element.get("geometry", [])]
+        elif element.get("type") == "relation":
+            rings = [m.get("geometry", []) for m in element.get("members", []) if m.get("role") == "outer"]
+        for ring in rings:
+            if len(ring) >= 4:
+                shapes.append((Polygon([_local_xy(p["lon"], p["lat"]) for p in ring]), label))
+    return shapes
+
+
+def attach_addresses(places: list[dict], elements: list[dict]) -> int:
+    """Fill missing `address` values in place and return how many were added."""
+    from shapely.geometry import Point
+    shapes = _address_shapes(elements)
+    added = 0
+    for place in places:
+        if place.get("address") or place["category"] in NO_ADDRESS or not shapes:
+            continue
+        point = Point(*_local_xy(*place["coordinate"]))
+        inside = [(s, label) for s, label in shapes if s.geom_type == "Polygon" and s.contains(point)]
+        if inside:
+            # nested outlines (a wing inside a complex) should give the most specific one
+            place["address"] = min(inside, key=lambda item: item[0].area)[1]
+            added += 1
+            continue
+        if place["category"] in NO_NEARBY_ADDRESS:
+            continue
+        distance, label = min(((s.distance(point), label) for s, label in shapes), key=lambda item: item[0])
+        if distance <= NEAREST_ADDRESS_M:
+            place["address"] = label
+            added += 1
+    return added

@@ -29,3 +29,16 @@ def test_no_graph_not_silent_mock():
         'origin':{'place_id':'royce-hall'},'destination':{'place_id':'powell-library'},
         'departure_time':'2026-10-17T12:00:00-07:00','temperature_c':25})
     assert resp.status_code==503
+
+
+def test_route_from_raw_gps_coordinate():
+    # the app's default start is wherever the phone is, which is a coordinate
+    # that usually isn't any catalog place, so this path has to keep working.
+    from app.routing.graph import load_graph
+    if load_graph() is None: return
+    resp=client.post('/api/routes',json={
+        'origin':{'coordinate':[-118.4426,34.0722]},'destination':{'place_id':'ackerman-union'},
+        'departure_time':'2026-10-17T12:00:00-07:00','temperature_c':25})
+    assert resp.status_code==200
+    route=resp.json()['routes'][0]
+    assert route['distance_m']>0 and route['steps'][-1]['maneuver']=='arrive'

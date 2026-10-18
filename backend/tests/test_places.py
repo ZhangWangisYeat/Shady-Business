@@ -52,3 +52,30 @@ def test_osm_normalize_dedupes_skips_and_slugs():
     assert places["bruin-walk"]["coordinate"] == [-118.445, 34.0708]
     assert places["royce-drive"]["category"] == "Street"
     assert places["caf-med"]["name"] == "Caf– Med" and places["caf-med"]["aliases"] == ["CM"]
+
+
+def test_attach_addresses_inside_nearby_and_skipped():
+    from app.places.osm_import import attach_addresses
+    lat_m, lon_m = 1 / 111_320, 1 / (111_320 * 0.8283)
+    def at(east, north):
+        return [-118.4452 + east * lon_m, 34.0689 + north * lat_m]
+    def ring(e0, n0, e1, n1):
+        return [dict(zip(("lon", "lat"), at(e, n))) for e, n in [(e0, n0), (e1, n0), (e1, n1), (e0, n1), (e0, n0)]]
+    elements = [
+        {"type": "way", "tags": {"addr:housenumber": "308", "addr:street": "Westwood Plaza"}, "geometry": ring(0, 0, 40, 40)},
+        {"type": "node", "lon": at(200, 0)[0], "lat": at(200, 0)[1], "tags": {"addr:housenumber": "520", "addr:street": "Portola Plaza"}},
+    ]
+    places = [
+        {"name": "Cafe inside", "category": "Café", "coordinate": at(20, 20), "address": None},
+        {"name": "Hall 10 m away", "category": "Building", "coordinate": at(210, 0), "address": None},
+        {"name": "Hall 25 m away", "category": "Building", "coordinate": at(225, 0), "address": None},
+        {"name": "Statue next door", "category": "Artwork", "coordinate": at(205, 0), "address": None},
+        {"name": "Walk through it", "category": "Walkway", "coordinate": at(20, 20), "address": None},
+        {"name": "Has its own", "category": "Building", "coordinate": at(20, 20), "address": "1 Own St"},
+    ]
+    assert attach_addresses(places, elements) == 2
+    assert [p["address"] for p in places] == ["308 Westwood Plaza", "520 Portola Plaza", None, None, None, "1 Own St"]
+
+
+def test_catalog_has_filled_addresses():
+    assert find_place("ackerman-union").address == "308 Westwood Plaza"

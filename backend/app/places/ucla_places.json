@@ -4,7 +4,8 @@
   "license": "ODbL-1.0",
   "attribution": "© OpenStreetMap contributors",
   "data_as_of": "2026-10-17",
-  "coordinate_note": "building/area centers; not verified entrance points"
+  "coordinate_note": "building/area centers; not verified entrance points",
+  "address_note": "the place's own OSM address, else the addressed OSM building it sits inside, else an addressed OSM feature within 15 m (not for artwork, gardens, plazas or streets)"
  },
  "places": [
   {
@@ -26,7 +27,7 @@
     34.070359
    ],
    "category": "Dining",
-   "address": null,
+   "address": "308 Westwood Plaza",
    "aliases": []
   },
   {
@@ -37,7 +38,7 @@
     34.070396
    ],
    "category": "Building",
-   "address": null,
+   "address": "308 Westwood Plaza",
    "aliases": []
   },
   {
@@ -281,7 +282,7 @@
     34.068106
    ],
    "category": "Dining",
-   "address": null,
+   "address": "617 Charles Young Drive East Court of Sciences Student Center",
    "aliases": []
   },
   {
@@ -325,7 +326,7 @@
     34.07368
    ],
    "category": "Plaza",
-   "address": null,
+   "address": "110 Westwood Plaza",
    "aliases": [
     "Judy and Bernard Briskin Family Plaza"
    ]
@@ -338,7 +339,7 @@
     34.075902
    ],
    "category": "Building",
-   "address": null,
+   "address": "240 Charles E. Young Drive North",
    "aliases": []
   },
   {
@@ -360,7 +361,7 @@
     34.070187
    ],
    "category": "Café",
-   "address": null,
+   "address": "308 Westwood Plaza",
    "aliases": []
   },
   {
@@ -382,7 +383,7 @@
     34.070253
    ],
    "category": "Shop",
-   "address": null,
+   "address": "308 Westwood Plaza",
    "aliases": []
   },
   {
@@ -483,7 +484,7 @@
     34.07485
    ],
    "category": "Café",
-   "address": null,
+   "address": "280 Charles E. Young Drive North",
    "aliases": []
   },
   {
@@ -549,7 +550,7 @@
     34.065642
    ],
    "category": "Health",
-   "address": null,
+   "address": "100 UCLA Medical Plaza",
    "aliases": []
   },
   {
@@ -560,7 +561,7 @@
     34.065763
    ],
    "category": "Health",
-   "address": null,
+   "address": "100 UCLA Medical Plaza",
    "aliases": []
   },
   {
@@ -781,7 +782,7 @@
     34.073525
    ],
    "category": "Building",
-   "address": null,
+   "address": "110 Westwood Plaza",
    "aliases": []
   },
   {
@@ -814,7 +815,7 @@
     34.073972
    ],
    "category": "Building",
-   "address": null,
+   "address": "110 Westwood Plaza",
    "aliases": []
   },
   {
@@ -847,7 +848,7 @@
     34.068207
    ],
    "category": "Building",
-   "address": null,
+   "address": "617 Charles Young Drive East Court of Sciences Student Center",
    "aliases": [
     "Bombshelter"
    ]
@@ -926,7 +927,7 @@
     34.070352
    ],
    "category": "Housing",
-   "address": null,
+   "address": "401 Charles E Young Drive West",
    "aliases": [
     "De Neve Commons"
    ]
@@ -1049,7 +1050,7 @@
     34.066064
    ],
    "category": "Dining",
-   "address": null,
+   "address": "150 UCLA Medical Plaza",
    "aliases": []
   },
   {
@@ -1202,7 +1203,7 @@
     34.07364
    ],
    "category": "Building",
-   "address": null,
+   "address": "110 Westwood Plaza",
    "aliases": []
   },
   {
@@ -1448,7 +1449,7 @@
     34.073639
    ],
    "category": "Building",
-   "address": null,
+   "address": "110 Westwood Plaza",
    "aliases": []
   },
   {
@@ -1743,7 +1744,7 @@
     34.064231
    ],
    "category": "Parking",
-   "address": null,
+   "address": "200 Stein Plaza",
    "aliases": []
   },
   {
@@ -1800,7 +1801,7 @@
     34.07034
    ],
    "category": "Dining",
-   "address": null,
+   "address": "308 Westwood Plaza",
    "aliases": []
   },
   {
@@ -1943,7 +1944,7 @@
     34.067558
    ],
    "category": "Building",
-   "address": null,
+   "address": "621 Charles E. Young Drive South",
    "aliases": []
   },
   {
@@ -1976,7 +1977,7 @@
     34.070511
    ],
    "category": "Café",
-   "address": null,
+   "address": "308 Westwood Plaza",
    "aliases": []
   },
   {
@@ -2341,7 +2342,7 @@
     34.074025
    ],
    "category": "Building",
-   "address": null,
+   "address": "110 Westwood Plaza",
    "aliases": []
   },
   {
@@ -2398,7 +2399,7 @@
     34.067375
    ],
    "category": "Building",
-   "address": null,
+   "address": "621 Charles E. Young Drive South",
    "aliases": []
   },
   {
@@ -2409,7 +2410,7 @@
     34.073907
    ],
    "category": "Café",
-   "address": null,
+   "address": "110 Westwood Plaza",
    "aliases": []
   },
   {
@@ -2664,7 +2665,7 @@
     34.060643
    ],
    "category": "Parking",
-   "address": null,
+   "address": "1000 Veteran Avenue",
    "aliases": []
   },
   {
@@ -2697,7 +2698,7 @@
     34.074195
    ],
    "category": "Parking",
-   "address": null,
+   "address": "110 Westwood Plaza",
    "aliases": []
   },
   {
@@ -2974,7 +2975,7 @@
     34.072587
    ],
    "category": "Dining",
-   "address": null,
+   "address": "270 De Neve Drive",
    "aliases": []
   },
   {
@@ -3128,7 +3129,7 @@
     34.070178
    ],
    "category": "Dining",
-   "address": null,
+   "address": "308 Westwood Plaza",
    "aliases": [
     "Rubio's Coastal Grill"
    ]
@@ -3255,7 +3256,7 @@
     34.069229
    ],
    "category": "Café",
-   "address": null,
+   "address": "580 Portola Plaza",
    "aliases": []
   },
   {
@@ -3569,7 +3570,7 @@
     34.070637
    ],
    "category": "Shop",
-   "address": null,
+   "address": "308 Westwood Plaza",
    "aliases": []
   },
   {
@@ -3756,7 +3757,7 @@
     34.07058
    ],
    "category": "Shop",
-   "address": null,
+   "address": "308 Westwood Plaza",
    "aliases": []
   },
   {
@@ -3800,7 +3801,7 @@
     34.071974
    ],
    "category": "Shop",
-   "address": null,
+   "address": "221 Westwood Plaza",
    "aliases": []
   },
   {
@@ -3811,7 +3812,7 @@
     34.070703
    ],
    "category": "Health",
-   "address": null,
+   "address": "308 Westwood Plaza",
    "aliases": []
   },
   {
@@ -3844,7 +3845,7 @@
     34.059383
    ],
    "category": "Place",
-   "address": null,
+   "address": "1145 Gayley Avenue",
    "aliases": []
   },
   {
@@ -3855,7 +3856,7 @@
     34.058206
    ],
    "category": "Office",
-   "address": null,
+   "address": "10920 Wilshire Boulevard",
    "aliases": []
   },
   {
@@ -3923,7 +3924,7 @@
     34.066326
    ],
    "category": "Library",
-   "address": null,
+   "address": "10833 Le Conte Ave",
    "aliases": []
   },
   {
@@ -4024,7 +4025,7 @@
     34.070517
    ],
    "category": "Shop",
-   "address": null,
+   "address": "308 Westwood Plaza",
    "aliases": []
   },
   {
@@ -4035,7 +4036,7 @@
     34.070472
    ],
    "category": "Shop",
-   "address": null,
+   "address": "308 Westwood Plaza",
    "aliases": []
   },
   {
@@ -4071,7 +4072,7 @@
     34.070722
    ],
    "category": "Bank",
-   "address": null,
+   "address": "308 Westwood Plaza",
    "aliases": []
   },
   {
@@ -4106,7 +4107,7 @@
     34.075963
    ],
    "category": "Café",
-   "address": null,
+   "address": "240 Charles E. Young Drive North",
    "aliases": []
   },
   {
@@ -4238,7 +4239,7 @@
     34.058262
    ],
    "category": "Bank",
-   "address": null,
+   "address": "10920 Wilshire Boulevard",
    "aliases": []
   },
   {
@@ -4293,7 +4294,7 @@
     34.061005
    ],
    "category": "Building",
-   "address": null,
+   "address": "1040 Veteran Avenue",
    "aliases": []
   },
   {
@@ -4440,7 +4441,7 @@
     34.0683
    ],
    "category": "Dining",
-   "address": null,
+   "address": "617 Charles Young Drive East Court of Sciences Student Center",
    "aliases": []
   },
   {
