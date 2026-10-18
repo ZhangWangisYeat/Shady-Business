@@ -6,8 +6,9 @@ from pathlib import Path
 
 from shapely.affinity import rotate, scale, translate
 from shapely.geometry import Point, shape
+from shapely.geometry.base import BaseGeometry
 
-from app.shade.model import MIN_SOLAR_ELEVATION, PROJECTION
+from app.shade.model import MIN_SOLAR_ELEVATION, PROJECTION, _project_polygon
 
 
 @dataclass(frozen=True)
@@ -25,6 +26,8 @@ class TreeDataset:
     source: str | None
     data_as_of: str | None
     unmodeled_records: int
+    coverage_complete_verified: bool
+    coverage_geometry: BaseGeometry | None
 
 
 def _positive(value, maximum):
@@ -66,7 +69,13 @@ def read_tree_model(path: Path) -> TreeDataset:
             raise ValueError("Crown base must be finite, nonnegative and below tree height")
         trees.append(TreeCrown(Point(*PROJECTION.transform(point.x, point.y)), float(height), float(radius),
                                str(props.get("tree_id") or identity), crown_base))
-    return TreeDataset(tuple(trees), metadata.get("source"), metadata.get("data_as_of"), unmodeled)
+    coverage = metadata.get("coverage_geometry")
+    coverage = _project_polygon(coverage) if coverage is not None else None
+    return TreeDataset(
+        tuple(trees), metadata.get("source"), metadata.get("data_as_of"), unmodeled,
+        metadata.get("coverage_complete_verified") is True and unmodeled == 0,
+        coverage,
+    )
 
 
 def cast_tree_shadow(tree: TreeCrown, elevation_deg: float, azimuth_deg: float):

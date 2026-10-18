@@ -32,6 +32,10 @@ LIMITATIONS = (
 )
 
 
+class ShadeDataUnavailable(Exception):
+    pass
+
+
 @dataclass(frozen=True)
 class ShadeModel:
     shapes: tuple[tuple[BaseGeometry, float], ...]
@@ -52,6 +56,15 @@ class ShadowField:
     data_as_of: str | None = None
     source: str | None = None
     limitations: tuple[str, ...] = LIMITATIONS
+
+
+def model_coverage_status(model: ShadeModel | None) -> Literal["unavailable", "unverified", "verified"]:
+    if model is None:
+        return "unavailable"
+    if (getattr(model, "coverage_complete_verified", False)
+            and getattr(model, "coverage_geometry", None) is not None):
+        return "verified"
+    return "unverified"
 
 
 def _project_polygon(geometry: dict) -> BaseGeometry:
@@ -93,8 +106,11 @@ def read_model(path: Path) -> ShadeModel | None:
 
 @lru_cache(maxsize=1)
 def load_model() -> ShadeModel | None:
-    buildings = read_model(SHADE_FILE) if SHADE_FILE.is_file() else None
-    return with_tree_file(buildings, TREE_FILE) if TREE_FILE.is_file() else buildings
+    try:
+        buildings = read_model(SHADE_FILE) if SHADE_FILE.is_file() else None
+        return with_tree_file(buildings, TREE_FILE) if TREE_FILE.is_file() else buildings
+    except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
+        raise ShadeDataUnavailable("Shade dataset could not be loaded") from exc
 
 
 def with_tree_file(buildings: ShadeModel | None, path: Path) -> ShadeModel | None:
@@ -106,10 +122,19 @@ def with_tree_file(buildings: ShadeModel | None, path: Path) -> ShadeModel | Non
     dates = [buildings.data_as_of if buildings else None, dataset.data_as_of]
     dates = dates if buildings else [dataset.data_as_of]
     source = "; ".join(s for s in (buildings.source if buildings else None, dataset.source) if s) or None
+    coverage = None
+    complete = bool(
+        buildings and buildings.coverage_complete_verified and buildings.coverage_geometry is not None
+        and dataset.coverage_complete_verified and dataset.coverage_geometry is not None
+    )
+    if complete:
+        coverage = buildings.coverage_geometry.intersection(dataset.coverage_geometry)
+        if coverage.is_empty:
+            coverage, complete = None, False
     return ShadeModel(
         buildings.shapes if buildings else (),
         dates[0] if all(d is not None and d == dates[0] for d in dates) else None,
-        False, None, source, dataset.trees,
+        complete, coverage, source, dataset.trees,
     )
 
 

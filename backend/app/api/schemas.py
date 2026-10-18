@@ -49,6 +49,7 @@ class RouteResponseItem(BaseModel):
     distance_m: float
     sun_seconds: float | None
     unknown_seconds: float
+    coverage_fraction: float = Field(ge=0, le=1)
     optimization_quality: Literal["shortest_time", "candidate_search", "unavailable"]
     geometry: LineString
     segments: list[RouteSegment]
@@ -57,6 +58,8 @@ class Conditions(BaseModel):
     temperature_c: float
     temperature_source: Literal["user"] = "user"
     shade_model: Literal["unavailable", "geometry_estimate"] = "unavailable"
+    shade_coverage: Literal["unavailable", "unverified", "verified"]
+    solar_status: Literal["daylight", "night", "low_sun", "unavailable"]
     data_as_of: str | None = None
     model_limitations: list[str]
 

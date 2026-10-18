@@ -25,4 +25,17 @@ def test_unknown_shade_never_claims_better_route():
 def test_detour_capped():
     selected=choose_routes([FAST,Candidate((1,6,2),1200,0,0)],45)
     assert selected['maximum_shade'] == FAST
-    assert recommended_detour_fraction(0)==0
+    assert selected['recommended'] == FAST
+
+
+def test_recommended_detour_temperature_bands():
+    assert recommended_detour_fraction(24.9) == .15
+    assert recommended_detour_fraction(25) == .25
+    assert recommended_detour_fraction(29.9) == .25
+    assert recommended_detour_fraction(30) == .35
+
+
+def test_hot_threshold_expands_recommended_route_pool():
+    longer_shaded=Candidate((1,7,2),790,0,0)
+    assert choose_routes([FAST,longer_shaded],29.9)['recommended'] == FAST
+    assert choose_routes([FAST,longer_shaded],30)['recommended'] == longer_shaded

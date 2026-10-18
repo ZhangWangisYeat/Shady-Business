@@ -10,7 +10,64 @@ The new independent scorer additionally requires an explicit WGS84
 pieces sunny. The completeness flag alone does not establish a region. Missing
 building heights disable verified sunshine claims. Coverage verification must
 include trees and outside obstacles casting shadows inward. See
-`../../docs/shade-scoring.md`; the legacy HTTP route adapter is not yet migrated.
+`../../docs/shade-scoring.md`; the HTTP route adapter uses this coverage-aware
+scorer and falls back to Fastest when its exposure remains incomplete.
+
+Before promoting a local demo corridor, run the read-only gate:
+
+```powershell
+python scripts/audit_shade_coverage.py --buildings backend/data/ucla_buildings.geojson --trees backend/data/ucla_trees.geojson --corridor-bbox WEST SOUTH EAST NORTH
+```
+
+For a real route, prefer deriving the audit extent from every graph edge eligible
+for Recommended and Maximum Shade rather than hand-entering a rectangle:
+
+```powershell
+python scripts/audit_shade_coverage.py --buildings backend/data/ucla_buildings.geojson --trees backend/data/ucla_trees.geojson --route -118.4422 34.0728 -118.4440 34.0703 --departure-time 2026-10-17T15:00:00-07:00
+```
+
+Exit `0` means both sources explicitly claim verified coverage, all required
+dimensions are present, and their coverage polygons contain the proposed
+corridor. Exit `1` prints machine-readable blockers and never edits either file;
+source/study bounding boxes are not accepted as proof of complete coverage.
+
+Generate an ignored, explicitly unverified on-site checklist only after the
+route-aware extent check passes:
+
+```powershell
+python scripts/export_field_audit.py --origin-place powell-library --destination-place ackerman-union --departure-time 2026-10-17T15:00:00-07:00 --temperature-c 38 --buildings backend/data/ucla_buildings.geojson --trees backend/data/ucla_trees.geojson --out backend/data/powell_ackerman_field_audit.geojson --confirm-unverified-preview
+```
+
+The resulting routes, inspection zone and check points are evidence-gathering
+only. The file is never accepted as runtime shade input and never promotes the
+coverage flag by itself.
+
+After an independent reviewer fills every object/check-point field and the
+top-level `metadata.review` confirmations, validate the packet against the exact
+building, tree and graph inputs used to create it:
+
+```powershell
+python scripts/validate_field_audit.py --audit backend/data/powell_ackerman_field_audit.geojson --buildings backend/data/ucla_buildings.geojson --trees backend/data/ucla_trees.geojson --graph backend/data/ucla_walk.graphml
+```
+
+The validator checks the recorded SHA-256 hashes, the full candidate inspection
+scope, all object dimensions/presence, all 15 time-matched observations and
+photo references. Exit `0` means only `ready_for_manual_promotion=true`; it never
+edits runtime inputs or sets `coverage_complete_verified`. Missing evidence,
+model/field disagreement, a recorded obstruction, or changed inputs exits `1`.
+
+Only after that validator passes, create new derived runtime files with an
+explicit confirmation (source inputs are never overwritten):
+
+```powershell
+python scripts/promote_field_audit.py --audit backend/data/powell_ackerman_field_audit.geojson --buildings backend/data/ucla_buildings.geojson --trees backend/data/ucla_trees.geojson --graph backend/data/ucla_walk.graphml --out-buildings backend/data/ucla_buildings_verified.geojson --out-trees backend/data/ucla_trees_verified.geojson --confirm-promotion
+```
+
+The derived files contain the audited candidate bounding box as their explicit
+coverage geometry plus the audit/reference hashes. Point `SHADY_SHADE_FILE` and
+`SHADY_TREE_FILE` at those files only after reviewing the promotion report. The
+tool refuses incomplete evidence, structural edits, changed inputs, source-file
+overwrites and existing output paths.
 
 ## Existing OSM bundle import
 
@@ -21,6 +78,21 @@ heights become unknown. No guessed tree crowns are imported. Source checksum,
 ODbL attribution, fetch timestamp and units are retained. See
 `../../docs/references/ucla-data-audit.md` for the local intake results and
 minimum fields needed from an authorized tree inventory export.
+
+## Local user-supplied building estimates
+
+To derive the runtime file from the preserved OSM input and the user's 2026-10-17
+height table:
+
+```powershell
+python scripts/apply_user_building_heights.py --input ucla_buildings.geojson --out backend/data/ucla_buildings.geojson
+```
+
+This applies 16 approximate heights as `user_supplied_estimate` and excludes the
+three explicitly ignored unnamed roof/tent/shed features from shade obstruction
+modeling. It does not change the walking graph or claim field verification, and
+keeps `coverage_complete_verified=false` until the corridor/external buffer is
+actually checked.
 
 Never commit private location data or restricted/licensed imagery.
 

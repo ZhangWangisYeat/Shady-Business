@@ -9,7 +9,7 @@ from pathlib import Path
 
 import networkx as nx
 import pytest
-from shapely.geometry import Point, box
+from shapely.geometry import Point, box, mapping
 
 from app.shade import model as shade_model
 from app.shade.model import INVERSE_PROJECTION, PROJECTION, ShadeModel, build_shadow_field, with_tree_file
@@ -109,6 +109,27 @@ def test_building_and_tree_union_never_counts_overlap_twice(monkeypatch):
     assert combined.shadows.area <= tree_only.shadows.area + building_only.shadows.area
     assert combined.shadows.area < tree_only.shadows.area + building_only.shadows.area - 1
     assert combined.shadows.covers(tree_only.shadows) and combined.shadows.covers(building_only.shadows)
+
+
+def test_combined_coverage_is_verified_intersection_only(tmp_path):
+    path = tree_file(tmp_path)
+    raw = json.loads(path.read_text())
+    tree_coverage = box(-118.446, 34.068, -118.444, 34.070)
+    raw["metadata"].update(coverage_complete_verified=True,
+                           coverage_geometry=mapping(tree_coverage))
+    path.write_text(json.dumps(raw))
+    building_coverage = shade_model._project_polygon(
+        mapping(box(-118.4455, 34.0685, -118.4435, 34.0705)))
+    buildings = ShadeModel((), None, True, building_coverage, "buildings")
+    combined = with_tree_file(buildings, path)
+    expected = building_coverage.intersection(shade_model._project_polygon(mapping(tree_coverage)))
+    assert combined.coverage_complete_verified
+    assert combined.coverage_geometry.equals(expected)
+
+    raw["metadata"]["coverage_complete_verified"] = False
+    path.write_text(json.dumps(raw))
+    incomplete = with_tree_file(buildings, path)
+    assert not incomplete.coverage_complete_verified and incomplete.coverage_geometry is None
 
 
 @pytest.mark.parametrize("props", [{"height_m": 0}, {"crown_radius_m": None}, {"status": "stump"}, {"height_m": True}])
@@ -225,9 +246,12 @@ def test_tree_shade_reaches_existing_route_api_without_schema_change(tmp_path, m
     assert result.status_code == 200, result.text
     data = result.json()
     assert data["conditions"]["shade_model"] == "geometry_estimate"
+    assert data["conditions"]["shade_coverage"] == "unverified"
+    assert data["conditions"]["solar_status"] == "daylight"
     assert any("ellipsoid" in note for note in data["conditions"]["model_limitations"])
     for route in data["routes"]:
         assert route["sun_seconds"] == 0 and route["unknown_seconds"] == 0
+        assert route["coverage_fraction"] == 1
         assert route["segments"][0]["shade_state"] == "shade"
         assert sum(s["duration_s"] for s in route["segments"]) == pytest.approx(route["duration_s"], abs=.01)
 
@@ -254,11 +278,17 @@ def test_route_api_splits_mixed_crowns_and_preserves_night_contract(tmp_path, mo
     response = TestClient(app).post("/api/routes", json={"origin": {"coordinate": start},
         "destination": {"coordinate": end}, "departure_time": WHEN.isoformat(), "temperature_c": 29})
     assert response.status_code == 200
-    for route in response.json()["routes"]:
+    data = response.json()
+    expected_solar_status = "daylight" if solar_elevation == 45 else "night" if solar_elevation < 0 else "low_sun"
+    assert data["conditions"]["solar_status"] == expected_solar_status
+    assert data["conditions"]["shade_coverage"] == "unverified"
+    for route in data["routes"]:
         assert [s["shade_state"] for s in route["segments"]] == states
         assert (route["sun_seconds"] is not None) is sun_known
         assert sum(s["unknown_seconds"] for s in route["segments"]) == pytest.approx(route["unknown_seconds"], abs=.01)
         assert sum(s["duration_s"] for s in route["segments"]) == pytest.approx(route["duration_s"], abs=.01)
+        assert route["coverage_fraction"] == pytest.approx(
+            1 - route["unknown_seconds"] / route["duration_s"], abs=1e-4)
         if sun_known:
             assert route["sun_seconds"] == 0 and route["unknown_seconds"] == 0
 
