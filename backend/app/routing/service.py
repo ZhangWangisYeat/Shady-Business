@@ -24,6 +24,8 @@ class EndpointTooFar(Exception):
 
 
 def build_routes(origin: tuple[float,float], destination: tuple[float,float], when: datetime, temperature_c: float) -> RoutesResponse:
+    # HTTP contract uses Celsius; routing policy uses Fahrenheit.
+    temperature_f = temperature_c * 9 / 5 + 32
     try:
         graph=load_graph()
     except GraphDataUnavailable as exc:
@@ -74,7 +76,7 @@ def build_routes(origin: tuple[float,float], destination: tuple[float,float], wh
                 continue
             costs[edge_ref]=EdgeCost(duration,float(score.sun_seconds))
         if all(edge_ref in costs for edge_ref in fastest_path):
-            weights=(0.,shade_weight(temperature_c),.5,1.,2.,4.,8.)
+            weights=(0.,shade_weight(temperature_f),.5,1.,2.,4.,8.)
             searched=candidate_edge_paths(costs,source,target,weights)
             paths=list(dict.fromkeys((fastest_path,*searched)))
 
@@ -96,7 +98,7 @@ def build_routes(origin: tuple[float,float], destination: tuple[float,float], wh
             total_unknown += score.unknown_seconds
         candidate=Candidate(tuple(path),total_time,round(total_sun,4) if total_unknown <= .01 else None,total_unknown)
         catalog[candidate.path]=(candidate,points,segments,total_len)
-    selected=choose_routes([r[0] for r in catalog.values()],temperature_c)
+    selected=choose_routes([r[0] for r in catalog.values()],temperature_f)
     items=[]; first_for={}
     for mode,candidate in selected.items():
         c,coords,segments,distance=catalog[candidate.path]

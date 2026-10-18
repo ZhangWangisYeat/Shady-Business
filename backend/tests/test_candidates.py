@@ -34,7 +34,7 @@ def test_weighted_candidates_feed_three_route_policy_with_hard_cap():
     candidates=[]
     for path in paths:
         candidates.append(Candidate(path,sum(costs[e].duration_s for e in path),sum(costs[e].sun_s for e in path),0))
-    selected=choose_routes(candidates,38)
+    selected=choose_routes(candidates,100.4)
     assert selected["fastest"].duration_s == 600
     assert selected["recommended"].duration_s == 660
     assert selected["maximum_shade"].duration_s == 870

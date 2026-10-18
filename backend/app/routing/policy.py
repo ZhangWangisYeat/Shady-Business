@@ -10,34 +10,34 @@ class Candidate:
     unknown_s: float
 
 
-def recommended_detour_fraction(temp_c: float) -> float:
-    if not isfinite(temp_c):
+def recommended_detour_fraction(temp_f: float) -> float:
+    if not isfinite(temp_f):
         raise ValueError("Temperature must be finite")
-    if temp_c >= 30:
+    if temp_f >= 86:
         return .35
-    if temp_c >= 25:
+    if temp_f >= 77:
         return .25
     return .15
 
 
-def shade_weight(temp_c: float) -> float:
+def shade_weight(temp_f: float) -> float:
     """Dimensionless penalty on sun seconds; heuristic, not a medical threshold."""
-    if not isfinite(temp_c):
+    if not isfinite(temp_f):
         raise ValueError("Temperature must be finite")
-    return 2.0 * min(1.0, max(0.0, (temp_c - (65-32)*5/9) / ((90-65)*5/9)))
+    return 2.0 * min(1.0, max(0.0, (temp_f - 65) / (90 - 65)))
 
 
-def choose_routes(candidates: list[Candidate], temp_c: float) -> dict[str, Candidate]:
+def choose_routes(candidates: list[Candidate], temp_f: float) -> dict[str, Candidate]:
     if not candidates:
         raise ValueError("Need at least one valid pedestrian path")
     fastest = min(candidates, key=lambda c: (c.duration_s, repr(c.path)))
     if any(c.sun_s is None or c.unknown_s > 0.01 for c in candidates):
         # Never treat missing shade as full shade or zero exposure.
         return {"fastest": fastest, "recommended": fastest, "maximum_shade": fastest}
-    recommended_cap = fastest.duration_s * (1 + recommended_detour_fraction(temp_c))
+    recommended_cap = fastest.duration_s * (1 + recommended_detour_fraction(temp_f))
     max_cap = min(fastest.duration_s * 1.6, fastest.duration_s + 720)
     eligible_recommended = [c for c in candidates if c.duration_s <= recommended_cap + 1e-6]
     eligible_max = [c for c in candidates if c.duration_s <= max_cap + 1e-6]
-    recommended = min(eligible_recommended, key=lambda c: (c.duration_s + shade_weight(temp_c) * float(c.sun_s), c.duration_s, repr(c.path)))
+    recommended = min(eligible_recommended, key=lambda c: (c.duration_s + shade_weight(temp_f) * float(c.sun_s), c.duration_s, repr(c.path)))
     maximum = min(eligible_max, key=lambda c: (float(c.sun_s), c.duration_s, repr(c.path)))
     return {"fastest": fastest, "recommended": recommended, "maximum_shade": maximum}

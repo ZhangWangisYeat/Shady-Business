@@ -23,3 +23,6 @@ Graph download is opt-in and not included in ZIP; offline tests use synthetic gr
 
 ## ADR-008 — Template freeze ahead of hackathon
 Retain existing Expo + Mapbox and FastAPI starter files today. Conduct data audit, normalizer, source tracking and geometric algorithm planning now; implement/validate route and shade improvements after the hackathon begins. No new infrastructure or unnecessary UI/backend code paths as part of this patch.
+
+## ADR-009 — Five opt-in historical route snapshots per installation
+For the requested backend-only history slice, use stdlib SQLite rather than a new database service or ORM. Save the complete successful POI-to-POI response, retaining the newest five distinct ordered pairs per private installation UUID. Do not persist coordinate searches or GPS tracks. Reading history never runs routing/shade calculations, while ordinary route requests continue to calculate fresh conditions. Expose saved departure time, temperature and an explicit historical flag so future mobile integration can distinguish replay from current guidance. This is local prototype capability-based isolation, not account authentication; mobile integration remains pending.

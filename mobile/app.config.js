@@ -10,6 +10,7 @@ module.exports = {
     ios: { bundleIdentifier: 'com.shadybusiness.app', infoPlist: { NSLocationWhenInUseUsageDescription: 'Show your location to guide your walk.' } },
     plugins: [
       '@rnmapbox/maps',
+      'expo-secure-store',
       ['expo-location', { locationWhenInUsePermission: 'Show your location to guide your walk.' }]
     ],
     extra: { apiBaseUrl: process.env.EXPO_PUBLIC_API_URL }
