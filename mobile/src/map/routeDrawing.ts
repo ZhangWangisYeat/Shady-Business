@@ -40,3 +40,8 @@ export function revealSegments(segments: RouteSegment[], fraction: number): Segm
   });
   return features;
 }
+
+// the first `fraction` of one whole line, for routes drawn without shade colours
+export function revealLine(coords: Coordinate[], fraction: number): Coordinate[] {
+  return cutLine(coords, Math.max(0, Math.min(1, fraction)) * lineLength(coords));
+}

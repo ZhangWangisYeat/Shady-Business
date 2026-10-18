@@ -8,7 +8,9 @@ from dataclasses import asdict, dataclass
 from math import isfinite
 from typing import Iterable, Literal
 
+import shapely
 from shapely.geometry import LineString, Point, mapping
+from shapely.strtree import STRtree
 from shapely.ops import transform
 
 from app.shade.model import INVERSE_PROJECTION, PROJECTION, ShadowField
@@ -67,6 +69,24 @@ def _coordinates(geometry):
             yield from _coordinates(part)
 
 
+def _outlines(field: ShadowField):
+    """Spatial index over the shadow and coverage outlines, built once per field.
+
+    Rebuilding ``area.boundary`` for every edge and intersecting each piece with
+    the whole campus outline was most of the routing time. Intersecting with the
+    individual outline rings near a piece gives the same cut points.
+    """
+    if "outlines" not in field.cache:
+        parts = []
+        for area in (field.shadows, field.coverage_geometry):
+            if area is not None and not area.is_empty:
+                # prepared geometry makes the covers() checks in _state faster
+                shapely.prepare(area)
+                parts.extend(shapely.get_parts(area.boundary))
+        field.cache["outlines"] = (STRtree(parts) if parts else None, parts)
+    return field.cache["outlines"]
+
+
 def _state(field: ShadowField, point: Point) -> State:
     if field.status == "night":
         return "no_direct_sun"
@@ -91,8 +111,7 @@ def score_route(edges: Iterable[RouteEdge], field: ShadowField) -> RouteShadeSco
     total_distance = total_duration = 0.0
     seconds = dict.fromkeys(("shade", "sun", "unknown", "no_direct_sun"), 0.0)
     previous_end = None
-    boundaries = tuple(area.boundary for area in (field.shadows, field.coverage_geometry)
-                       if area is not None and not area.is_empty) if field.status == "daylight" else ()
+    tree, outline_parts = _outlines(field) if field.status == "daylight" else (None, ())
     for edge in edges:
         if isinstance(edge.duration_s, bool) or not isfinite(edge.duration_s) or edge.duration_s <= 0:
             raise ValueError("Edge duration_s must be finite and greater than zero")
@@ -119,8 +138,9 @@ def score_route(edges: Iterable[RouteEdge], field: ShadowField) -> RouteShadeSco
             if piece.length == 0:
                 continue
             cuts = {0.0, piece.length}
-            for boundary in boundaries:
-                cuts.update(piece.project(Point(c)) for c in _coordinates(piece.intersection(boundary)))
+            if tree is not None:
+                for i in tree.query(piece, predicate="intersects"):
+                    cuts.update(piece.project(Point(c)) for c in _coordinates(piece.intersection(outline_parts[i])))
             ordered = sorted(cuts)
             for start, end in zip(ordered, ordered[1:]):
                 if end <= start:

@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { searchPlaces } from '../api/client';
 import type { Place } from '../api/types';
 import { COLORS } from '../theme';
+
+const LOGO = require('../brand/logo.png');
 
 export type Field = 'origin' | 'destination';
 // 'current' means "start from wherever my phone is", which usually isn't any
@@ -104,9 +106,16 @@ export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChan
           <View style={styles.rule} />
           {row('destination')}
         </View>
-        <TouchableOpacity style={styles.swap} onPress={onSwap} accessibilityLabel="Swap start and destination">
-          <Text style={styles.swapText}>⇅</Text>
-        </TouchableOpacity>
+        {/* the logo lives in the card's top right, level with the start row, so
+            branding doesn't cost a row of map. swap sits by the destination row. */}
+        <View style={styles.side}>
+          <View style={styles.slot}><Image source={LOGO} style={styles.logo} accessibilityLabel="Shady Business" /></View>
+          <View style={styles.slot}>
+            <TouchableOpacity style={styles.swap} onPress={onSwap} accessibilityLabel="Swap start and destination">
+              <Text style={styles.swapText}>⇅</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
       {focus && (
         <View style={styles.dropdown}>
@@ -145,7 +154,10 @@ const styles = StyleSheet.create({
   input: { flex: 1, fontSize: 16, color: COLORS.ink, paddingVertical: 0 },
   clear: { fontSize: 15, color: COLORS.muted, paddingHorizontal: 8 },
   rule: { height: 1, backgroundColor: COLORS.rule, marginLeft: 24 },
-  swap: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', marginLeft: 4 },
+  side: { marginLeft: 4, justifyContent: 'space-between' },
+  slot: { height: 46, width: 44, alignItems: 'center', justifyContent: 'center' },
+  logo: { width: 34, height: 34, borderRadius: 17 },
+  swap: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
   swapText: { fontSize: 22, color: COLORS.ink },
   dropdown: { borderTopWidth: 1, borderTopColor: COLORS.rule, paddingVertical: 4 },
   hint: { color: COLORS.muted, fontSize: 13, paddingHorizontal: 16, paddingVertical: 12 },

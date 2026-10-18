@@ -1,0 +1,79 @@
+"""Opt-in, device-scoped snapshots; never store live GPS origins."""
+from contextlib import contextmanager
+from datetime import datetime, timezone
+from hashlib import sha256
+import os
+from pathlib import Path
+import sqlite3
+from uuid import uuid4
+
+from pydantic import BaseModel
+
+from app.api.schemas import RouteRequest, RoutesResponse
+
+
+class SavedRoute(BaseModel):
+    id: str
+    saved_at: datetime
+    request: RouteRequest
+    result: RoutesResponse
+    is_historical: bool = True
+
+
+class RouteHistory(BaseModel):
+    items: list[SavedRoute]
+
+
+@contextmanager
+def database():
+    path = Path(os.environ.get('ROUTE_HISTORY_DB',
+        str(Path(__file__).resolve().parents[2] / 'data' / 'route_history.sqlite3')))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    connection = sqlite3.connect(path, timeout=5)
+    try:
+        connection.execute('''CREATE TABLE IF NOT EXISTS route_history (
+            sequence INTEGER PRIMARY KEY AUTOINCREMENT,
+            owner TEXT NOT NULL, id TEXT NOT NULL UNIQUE,
+            origin TEXT NOT NULL, destination TEXT NOT NULL,
+            snapshot TEXT NOT NULL,
+            UNIQUE(owner, origin, destination))''')
+        with connection:
+            yield connection
+    finally:
+        connection.close()
+
+
+def owner_hash(key: str) -> str:
+    return sha256(key.encode('utf-8')).hexdigest()
+
+
+def save(key: str, request: RouteRequest, result: RoutesResponse) -> bool:
+    if request.origin.place_id is None or request.destination.place_id is None:
+        return False
+    snapshot = SavedRoute(id=str(uuid4()), saved_at=datetime.now(timezone.utc),
+                          request=request, result=result)
+    owner = owner_hash(key)
+    with database() as connection:
+        # Serialize read/replace/prune across concurrent requests and processes.
+        connection.execute('BEGIN IMMEDIATE')
+        connection.execute('DELETE FROM route_history WHERE owner=? AND origin=? AND destination=?',
+                           (owner, request.origin.place_id, request.destination.place_id))
+        connection.execute('INSERT INTO route_history(owner,id,origin,destination,snapshot) VALUES(?,?,?,?,?)',
+                           (owner, snapshot.id, request.origin.place_id,
+                            request.destination.place_id, snapshot.model_dump_json()))
+        connection.execute('''DELETE FROM route_history WHERE owner=? AND sequence NOT IN
+            (SELECT sequence FROM route_history WHERE owner=? ORDER BY sequence DESC LIMIT 5)''',
+                           (owner, owner))
+    return True
+
+
+def read(key: str, entry_id: str | None = None) -> list[SavedRoute]:
+    with database() as connection:
+        if entry_id is None:
+            rows = connection.execute(
+                'SELECT snapshot FROM route_history WHERE owner=? ORDER BY sequence DESC LIMIT 5',
+                (owner_hash(key),)).fetchall()
+        else:
+            rows = connection.execute('SELECT snapshot FROM route_history WHERE owner=? AND id=?',
+                                      (owner_hash(key), entry_id)).fetchall()
+    return [SavedRoute.model_validate_json(row[0]) for row in rows]

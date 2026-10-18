@@ -1,21 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Platform, ScrollView, StatusBar as RNStatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Platform, ScrollView, TextInput, StatusBar as RNStatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as Location from 'expo-location';
 import { ShadyMap } from './src/map/ShadyMap';
 import { PlaceSearch, type Field, type StartPoint } from './src/search/PlaceSearch';
 import { currentCoordinate } from './src/location/currentLocation';
 import { bearing, useHeading } from './src/location/heading';
-import { getRoutes } from './src/api/client';
-import type { Coordinate, Place, Route, RouteEndpoint, RoutesResponse, ShadeState } from './src/api/types';
+import { getCurrentTemperature, getRoutes, searchPlaces } from './src/api/client';
+import { RecentRoutes, savedConditions } from './src/components/RecentRoutes';
+import type { Coordinate, Place, Route, RouteEndpoint, RoutesResponse, SavedRoute, ShadeState } from './src/api/types';
 import { interpolateRoute, locateOnRoute, statusByTimeFraction } from './src/navigation/progress';
 import { MANEUVER_ICON, formatDistance, stepProgress } from './src/navigation/steps';
 import { COLORS } from './src/theme';
 import { exposure } from './src/plan/exposure';
+import { cardLabel, defaultMode, visibleRoutes } from './src/plan/visibleRoutes';
 
-const routeName: Record<Route['mode'], string> = { fastest: 'Fastest', recommended: 'Recommended', maximum_shade: 'Most shade' };
 const statusText: Record<ShadeState, string> = { shade: 'Shade', sun: 'Sun', unknown: 'Unknown' };
-const MODE_ORDER: Route['mode'][] = ['recommended', 'fastest', 'maximum_shade'];
 // android draws edge to edge under the status bar now. react native's SafeAreaView
 // is deprecated, and the proper replacement (react-native-safe-area-context) is a
 // native module that needs a rebuild, so ios gets a notch-sized guess until then.
@@ -35,12 +35,22 @@ export default function App() {
   const [locating, setLocating] = useState(false);
   const [retry, setRetry] = useState(0);
   const [searchFocused, setSearchFocused] = useState(false);
-  const [temp, setTemp] = useState(29);
+  // degrees F; the client converts to the API's celsius
+  const [temp, setTemp] = useState(84);
+  // forecast: filled in from the weather service. manual: you set it, so the
+  // forecast never overwrites it. default: no forecast yet (or it failed).
+  const [tempSource, setTempSource] = useState<'default' | 'forecast' | 'manual'>('default');
+  const [tempDraft, setTempDraft] = useState<string | null>(null);
+  const [forecastFailed, setForecastFailed] = useState(false);
+  const manualTemp = useRef(false);
   const [routes, setRoutes] = useState<RoutesResponse | null>(null);
   const [calculating, setCalculating] = useState(false);
   // routes arrive before the map has drawn them; the cards wait for the drawing
   // so the sheet and the map finish together.
   const [revealed, setRevealed] = useState(false);
+  // a saved route from history, shown as it was calculated back then
+  const [savedRoute, setSavedRoute] = useState<SavedRoute | null>(null);
+  const [navigationIssue, setNavigationIssue] = useState<'weak-gps' | 'off-route' | null>(null);
   const [chosen, setChosen] = useState<Route['mode']>('recommended');
   const [showDirections, setShowDirections] = useState(false);
   const [walkSteps, setWalkSteps] = useState(false);
@@ -56,9 +66,15 @@ export default function App() {
   const subscription = useRef<Location.LocationSubscription | null>(null);
   const interval = useRef<ReturnType<typeof setInterval> | null>(null);
   const requestId = useRef(0);
+  // the route inputs a saved route stands for. while they don't change, the
+  // auto-routing effect leaves the saved snapshot alone instead of recalculating.
+  const savedInputs = useRef('');
   const active = routes?.routes.find(r => r.mode === chosen) ?? null;
-  // the compass only runs while the blue dot is on screen
-  const deviceHeading = useHeading(stage === 'navigate' ? !demo : (origin === 'current' || destination === 'current') && here !== null);
+  // the logo compass turns with the phone the whole time the app is open. this
+  // never asks for permission: android only sends readings once location access
+  // has been granted, and until then the logo just points north. a demo walk
+  // uses the route's direction instead.
+  const deviceHeading = useHeading(!(stage === 'navigate' && demo));
   // a demo walk has no real phone to turn, so the dot faces along the route
   const demoHeading = stage === 'navigate' && demo && active && position
     ? bearing(position, interpolateRoute(active, Math.min(1, progress + 0.02)))
@@ -77,6 +93,9 @@ export default function App() {
   // like google maps, picking both ends (or nudging the temperature) kicks off
   // the route search by itself instead of waiting for a "find routes" tap.
   useEffect(() => {
+    if (savedInputs.current && savedInputs.current === `${originKey}|${destinationKey}|${temp}|${retry}`) return;
+    savedInputs.current = '';
+    setSavedRoute(null);
     setRoutes(null); setRevealed(false); setShowDirections(false); setError('');
     const id = ++requestId.current;
     if (!origin || !destination) { setCalculating(false); return; }
@@ -96,7 +115,7 @@ export default function App() {
         }
         const endpoint = (end: Place | 'current'): RouteEndpoint => (end === 'current' ? { coordinate: coordinate! } : { place_id: end.id });
         const response = await getRoutes(endpoint(origin), endpoint(destination), temp);
-        if (id === requestId.current) { setRoutes(response); setChosen('recommended'); }
+        if (id === requestId.current) { setRoutes(response); setChosen(defaultMode(response.routes)); }
       } catch (e) {
         if (id !== requestId.current) return;
         // a failed fix means we don't know where you are any more, so the old
@@ -110,11 +129,71 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [originKey, destinationKey, temp, retry]);
 
+  // only on the "where to" sheet, so a forecast update can't throw away a route
+  // you're looking at by recalculating it underneath you. the backend caches the
+  // forecast for 15 minutes, so coming back here often is cheap.
+  const loadForecast = async (force = false) => {
+    if (manualTemp.current && !force) return;
+    try {
+      const forecast = await getCurrentTemperature();
+      if (manualTemp.current && !force) return;
+      manualTemp.current = false;
+      setTemp(Math.round(forecast.temperature_f)); setTempSource('forecast'); setForecastFailed(false);
+    } catch {
+      setForecastFailed(true);
+    }
+  };
+  useEffect(() => { if (!destination && stage === 'plan') void loadForecast(); }, [!destination && stage === 'plan']);
+  const setManualTemp = (value: number) => {
+    manualTemp.current = true;
+    setTempSource('manual');
+    setTemp(Math.max(23, Math.min(131, Math.round(value))));
+  };
+  const step = (delta: number) => {
+    const typed = tempDraft === null ? NaN : parseFloat(tempDraft);
+    const next = Math.max(23, Math.min(131, Math.round((Number.isNaN(typed) ? temp : typed) + delta)));
+    // mid-edit only the box changes. committing re-routes, and re-routing swaps
+    // the sheet to "finding routes", which unmounted the focused box and android
+    // threw focus into the search field instead.
+    if (tempDraft !== null) setTempDraft(String(next));
+    else setManualTemp(next);
+  };
+  const commitDraft = () => {
+    const typed = tempDraft === null ? NaN : parseFloat(tempDraft);
+    setTempDraft(null);
+    if (!Number.isNaN(typed)) setManualTemp(typed);
+  };
+
   const select = (field: Field, value: StartPoint) => {
     if (field === 'origin') setOrigin(value);
     else setDestination(value);
   };
   const swap = () => { setOrigin(destination); setDestination(origin); };
+
+  // history only stores place ids, so look the places back up by name to get
+  // their names and pins. if search can't find one, the route's own end point
+  // is close enough for a pin.
+  const placeFor = async (id: string, fallback: Coordinate): Promise<Place> => {
+    const guess = id.replace(/-\d+$/, '').replace(/-/g, ' ');
+    try {
+      const found = (await searchPlaces(guess, 20)).places.find(p => p.id === id);
+      if (found) return found;
+    } catch { /* fall through to the route's own end point */ }
+    return { id, name: guess.replace(/\b\w/g, c => c.toUpperCase()), coordinate: fallback, category: 'Place', address: null };
+  };
+  const openSavedRoute = async (item: SavedRoute) => {
+    const id = ++requestId.current;
+    stop(); setError(''); setCalculating(false);
+    const line = item.result.routes[0]?.geometry.coordinates ?? [];
+    const [from, to] = await Promise.all([
+      placeFor(item.request.origin.place_id, line[0]),
+      placeFor(item.request.destination.place_id, line[line.length - 1]),
+    ]);
+    if (id !== requestId.current) return;
+    savedInputs.current = `${from.id}|${to.id}|${temp}|${retry}`;
+    setOrigin(from); setDestination(to);
+    setRoutes(item.result); setRevealed(false); setSavedRoute(item); setChosen(defaultMode(item.result.routes)); setShowDirections(false);
+  };
   const pick = (mode: Route['mode']) => { setChosen(mode); setPosition(null); setProgress(0); };
   const complete = () => { stop(); setStage('arrived'); };
   const startDemo = () => {
@@ -134,13 +213,16 @@ export default function App() {
       subscription.current = await Location.watchPositionAsync({ accuracy: Location.Accuracy.BestForNavigation, timeInterval: 1000, distanceInterval: 2 }, sample => {
         const coord: Coordinate = [sample.coords.longitude, sample.coords.latitude];
         const match = locateOnRoute(active, coord, sample.coords.accuracy);
-        setPosition(coord); setProgress(match.fraction); setShade(match.state);
+        // a weak fix or a fix off the path shouldn't move your progress backwards
+        setNavigationIssue(sample.coords.accuracy === null || sample.coords.accuracy > 30 ? 'weak-gps' : match.offRoute ? 'off-route' : null);
+        setPosition(coord); setShade(match.state);
+        if (!match.offRoute) setProgress(match.fraction);
         if (!match.offRoute && match.fraction > .97 && sample.coords.accuracy !== null && sample.coords.accuracy <= 25) { complete(); }
       });
     } catch (e) { setError(e instanceof Error ? e.message : 'GPS unavailable'); setStage('plan'); stop(); }
   };
-  const endNavigation = () => { stop(); setWalkSteps(false); setCompact(false); setStage('plan'); setPosition(null); setProgress(0); };
-  const reset = () => { stop(); setStage('plan'); setOrigin('current'); setDestination(null); setPosition(null); setProgress(0); setShade('unknown'); setError(''); };
+  const endNavigation = () => { stop(); setNavigationIssue(null); setWalkSteps(false); setCompact(false); setStage('plan'); setPosition(null); setProgress(0); };
+  const reset = () => { stop(); setNavigationIssue(null); savedInputs.current = ''; setSavedRoute(null); setStage('plan'); setOrigin('current'); setDestination(null); setPosition(null); setProgress(0); setShade('unknown'); setError(''); };
 
   const Button = ({ text, onPress, primary = true, style }: { text: string, onPress: () => void, primary?: boolean, style?: object }) =>
     <TouchableOpacity onPress={onPress} style={[styles.button, !primary && styles.outline, style]}>
@@ -154,12 +236,32 @@ export default function App() {
   };
   const minutes = (seconds: number) => Math.max(1, Math.ceil(seconds / 60));
   const arriveText = `Arrive at ${destinationName || 'your destination'}`;
-  const tempRow = <View style={styles.tempRow}>
-    <Text style={styles.eyebrow}>Temperature</Text>
-    <View style={styles.tempControls}>
-      <TouchableOpacity style={styles.tempButton} onPress={() => setTemp(v => Math.max(-5, v - 2))}><Text style={styles.tempLabel}>−</Text></TouchableOpacity>
-      <Text style={styles.tempValue}>{Math.round(temp * 9 / 5 + 32)}°F</Text>
-      <TouchableOpacity style={styles.tempButton} onPress={() => setTemp(v => Math.min(55, v + 2))}><Text style={styles.tempLabel}>+</Text></TouchableOpacity>
+  const tempRow = <View>
+    <View style={styles.tempRow}>
+      <Text style={styles.eyebrow}>Temperature</Text>
+      {/* one joined stepper reads as a control without needing underlines; the
+          middle is tappable to type a number */}
+      <View style={[styles.stepper, tempDraft !== null && styles.stepperEditing]}>
+        <TouchableOpacity style={styles.stepButton} onPress={() => step(-2)} accessibilityLabel="Cooler"><Text style={styles.tempLabel}>−</Text></TouchableOpacity>
+        <View style={styles.stepDivider} />
+        {tempDraft !== null
+          ? <View style={styles.stepValue}>
+              <TextInput style={[styles.tempValue, styles.tempInput]} value={tempDraft} onChangeText={setTempDraft} autoFocus selectTextOnFocus
+                keyboardType="number-pad" maxLength={3} returnKeyType="done" onSubmitEditing={commitDraft} onBlur={commitDraft} />
+              <Text style={styles.tempValue}>°F</Text>
+            </View>
+          : <TouchableOpacity style={styles.stepValue} onPress={() => setTempDraft(String(Math.round(temp)))} accessibilityLabel="Type a temperature">
+              <Text style={styles.tempValue}>{Math.round(temp)}°F</Text>
+            </TouchableOpacity>}
+        <View style={styles.stepDivider} />
+        <TouchableOpacity style={styles.stepButton} onPress={() => step(2)} accessibilityLabel="Warmer"><Text style={styles.tempLabel}>+</Text></TouchableOpacity>
+      </View>
+    </View>
+    <View style={styles.tempSourceRow}>
+      {tempSource !== 'manual' && <Text style={styles.tempSource}>{tempSource === 'forecast' ? 'Forecast from National Weather Service' : forecastFailed ? 'Couldn’t get the forecast' : 'Getting the forecast…'}</Text>}
+      {(tempSource === 'manual' || forecastFailed) && <TouchableOpacity hitSlop={8} onPress={() => void loadForecast(true)}>
+        <Text style={styles.tempSourceLink}>{tempSource === 'manual' ? 'Use forecast' : 'Retry'}</Text>
+      </TouchableOpacity>}
     </View>
   </View>;
 
@@ -169,6 +271,7 @@ export default function App() {
       <Text style={styles.heading}>Where to?</Text>
       <Text style={styles.muted}>Search for any UCLA building, library, café or landmark.</Text>
       {tempRow}
+      <RecentRoutes onSelect={item => void openSavedRoute(item)} />
     </>;
     if (!origin) return <>
       <Text style={styles.eyebrow}>Starting point</Text>
@@ -208,19 +311,26 @@ export default function App() {
     </>;
     // recommended first because it's the one we'd actually suggest; it already
     // equals fastest when it's cool out, so nothing is hidden by putting it on top.
-    const ordered = [...routes.routes].sort((a, b) => MODE_ORDER.indexOf(a.mode) - MODE_ORDER.indexOf(b.mode));
+    const ordered = visibleRoutes(routes.routes);
     return <>
-      <Text style={styles.eyebrow}>{fromHere ? 'Walking to' : 'Route preview'}</Text>
+      <Text style={styles.eyebrow}>{savedRoute ? 'Saved route' : fromHere ? 'Walking to' : 'Route preview'}</Text>
       <Text style={styles.heading} numberOfLines={1}>{destinationName}</Text>
-      <Text style={styles.muted}>{routes.conditions.shade_model === 'unavailable' ? 'No shade data yet, so the three options may be the same path.' : 'Sun is modeled from building and tree data, not measured live.'}</Text>
+      {savedRoute && <View style={styles.savedNotice}>
+        <Text style={styles.muted}>Calculated {savedConditions(savedRoute)}. Shade is as it was then, not now.</Text>
+        <TouchableOpacity onPress={() => setRetry(n => n + 1)}><Text style={styles.linkTextLeft}>Update for current conditions</Text></TouchableOpacity>
+      </View>}
+      {!savedRoute && (routes.conditions.shade_model === 'unavailable' || ordered.length === 1) && <Text style={styles.muted}>
+        {routes.conditions.shade_model === 'unavailable' ? 'No shade data here yet, so this is just the fastest route.' : 'No path here is shadier than the fastest one.'}
+      </Text>}
       <View style={styles.routeList}>
-        {ordered.map(route => {
+        {ordered.map(card => {
+          const route = card.route;
           const on = chosen === route.mode;
           const e = exposure(route);
           return <TouchableOpacity key={route.mode} onPress={() => pick(route.mode)} style={styles.routeRow}>
             <View style={[styles.routeBar, on && styles.routeBarOn]} />
             <View style={{ flex: 1 }}>
-              <Text style={[styles.routeName, !on && styles.routeNameOff]}>{routeName[route.mode]}</Text>
+              <Text style={[styles.routeName, !on && styles.routeNameOff]}>{cardLabel(card, ordered)}</Text>
               <Text style={styles.routeMeta}>
                 {formatDistance(route.distance_m)}, {e.sunPct === null ? 'sun unknown' : `${e.sunPct}% in sun`}{e.sunPct !== null && e.unknownPct > 0 ? `, ${e.unknownPct}% unknown` : ''}
               </Text>
@@ -275,7 +385,8 @@ export default function App() {
         <Stat value={`${minutesLeft}`} label="Min left" />
         <Stat value={`${Math.floor(progress * 100)}%`} label="Done" />
       </View>
-      {shade === 'unknown' && !walkSteps && <Text style={styles.muted}>No shade estimate here, or your position is uncertain.</Text>}
+      {navigationIssue && <Text style={styles.warning}>{navigationIssue === 'weak-gps' ? 'GPS signal is weak, so shade status is unavailable.' : 'You seem to be off the route. Head back to the highlighted path.'}</Text>}
+      {shade === 'unknown' && !walkSteps && !navigationIssue && <Text style={styles.muted}>No shade estimate here, or your position is uncertain.</Text>}
       {walkSteps && active && <ScrollView style={styles.walkSteps}>
         {active.steps.map((step, i) => {
           // steps up to the current one are behind you; the one after it is
@@ -302,11 +413,15 @@ export default function App() {
       destination={destination === 'current' ? herePlace(here) : destination} destinationIsCurrent={toHere}
       position={position} navigating={stage === 'navigate'} calculating={calculating} onDrawn={() => setRevealed(true)}
       heading={demo && stage === 'navigate' ? demoHeading : deviceHeading}
-      insets={{ top: stage === 'plan' ? TOP_INSET + cardHeight : TOP_INSET, bottom: sheetHeight }} />
+      onLocate={async () => {
+        try { const coordinate = await currentCoordinate(); setHere(coordinate); return coordinate; }
+        catch (e) { setError(e instanceof Error ? e.message : 'Could not get your location.'); return null; }
+      }}
+      insets={{ top: TOP_INSET + cardHeight, bottom: sheetHeight }} />
     <View style={[styles.safe, { paddingTop: TOP_INSET }]} pointerEvents="box-none">
-      {stage === 'plan' && <View onLayout={e => setCardHeight(e.nativeEvent.layout.height + 8)}>
-        <PlaceSearch origin={origin} destination={destination} onSelect={select} onSwap={swap} onFocusChange={setSearchFocused} />
-      </View>}
+      <View pointerEvents="box-none" onLayout={e => setCardHeight(e.nativeEvent.layout.height + 8)}>
+        {stage === 'plan' && <PlaceSearch origin={origin} destination={destination} onSelect={select} onSwap={swap} onFocusChange={setSearchFocused} />}
+      </View>
       <View style={styles.spacer} pointerEvents="none" />
       {!searchFocused && <View style={styles.panel} onLayout={e => setSheetHeight(e.nativeEvent.layout.height)}>
         {stage === 'plan' && plan()}
@@ -321,7 +436,6 @@ export default function App() {
         {!(stage === 'navigate' && compact) && <View style={styles.legend}>
           {([['shade', 'Shade'], ['sun', 'Sun'], ['unknown', 'Unknown']] as const).map(([key, text]) =>
             <View key={key} style={styles.legendItem}><View style={[styles.swatch, { backgroundColor: COLORS[key] }]} /><Text style={styles.legendText}>{text}</Text></View>)}
-          <Text style={[styles.legendText, { marginLeft: 'auto' }]}>Estimates only</Text>
         </View>}
       </View>}
     </View>
@@ -337,9 +451,16 @@ const styles = StyleSheet.create({
   heading: { fontSize: 24, fontWeight: '700', color: COLORS.ink, letterSpacing: -0.3, marginTop: 4, marginBottom: 4 },
   muted: { color: COLORS.muted, fontSize: 13, lineHeight: 19 },
   tempRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 14, marginBottom: 4 },
-  tempControls: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  tempButton: { width: 32, height: 32, borderRadius: 4, borderWidth: 1, borderColor: COLORS.rule, alignItems: 'center', justifyContent: 'center' },
-  tempLabel: { fontSize: 18, color: COLORS.ink }, tempValue: { fontSize: 16, fontWeight: '600', color: COLORS.ink, minWidth: 44, textAlign: 'center' },
+  stepper: { flexDirection: 'row', alignItems: 'stretch', height: 36, borderWidth: 1, borderColor: COLORS.rule, borderRadius: 4 },
+  stepperEditing: { borderColor: COLORS.ink },
+  stepButton: { width: 36, alignItems: 'center', justifyContent: 'center' },
+  stepDivider: { width: 1, backgroundColor: COLORS.rule },
+  stepValue: { minWidth: 68, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 },
+  tempInput: { paddingVertical: 0, paddingHorizontal: 0, minWidth: 0 },
+  tempSourceRow: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 10, marginTop: 2 },
+  tempSource: { color: COLORS.muted, fontSize: 9.5, letterSpacing: 0.2 },
+  tempSourceLink: { color: COLORS.ink, fontSize: 10, fontWeight: '600' },
+  tempLabel: { fontSize: 18, color: COLORS.ink }, tempValue: { fontSize: 16, fontWeight: '600', color: COLORS.ink, textAlign: 'center' },
   loadingRow: { flexDirection: 'row', alignItems: 'center', marginVertical: 10 },
   button: { backgroundColor: COLORS.ink, paddingVertical: 14, borderRadius: 4, alignItems: 'center', marginTop: 10 },
   buttonText: { color: COLORS.paper, fontSize: 13, fontWeight: '700', letterSpacing: 1.5, textTransform: 'uppercase' },
@@ -367,6 +488,9 @@ const styles = StyleSheet.create({
   stepDistance: { color: COLORS.muted, fontSize: 12, marginLeft: 12 },
   nextRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8, marginBottom: 4 }, nextIcon: { fontSize: 30, color: COLORS.ink, width: 40 }, nextText: { fontSize: 19, fontWeight: '700', color: COLORS.ink },
   link: { alignSelf: 'center', padding: 8, marginTop: 2 }, linkText: { color: COLORS.ink, fontSize: 13, fontWeight: '600', textDecorationLine: 'underline' },
+  savedNotice: { marginTop: 4, gap: 4 },
+  linkTextLeft: { color: COLORS.ink, fontSize: 13, fontWeight: '600', textDecorationLine: 'underline' },
+  warning: { color: COLORS.ink, backgroundColor: '#FFF4D8', fontSize: 12, lineHeight: 18, padding: 10, borderRadius: 4, marginTop: 8 },
   previewNote: { color: COLORS.muted, fontSize: 12, textAlign: 'center', marginTop: 10 },
   error: { color: COLORS.error, fontSize: 12, marginTop: 9 },
   legend: { flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 14 },

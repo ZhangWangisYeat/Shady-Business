@@ -4,7 +4,7 @@ No network calls or invented heights. Existing routing imports remain compatible
 the independent scoring module uses ``build_shadow_field`` for bounded coverage.
 """
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field as dataclass_field
 from datetime import datetime
 from functools import lru_cache
 from math import cos, isfinite, radians, sin, tan
@@ -56,6 +56,9 @@ class ShadowField:
     data_as_of: str | None = None
     source: str | None = None
     limitations: tuple[str, ...] = LIMITATIONS
+    # scoring keeps its lookup structures for this field here, so they are built
+    # once per request instead of once per edge. not part of equality or hashing.
+    cache: dict = dataclass_field(default_factory=dict, compare=False, hash=False, repr=False)
 
 
 def model_coverage_status(model: ShadeModel | None) -> Literal["unavailable", "unverified", "verified"]:

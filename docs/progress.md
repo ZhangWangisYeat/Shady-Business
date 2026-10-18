@@ -169,3 +169,9 @@
 4. Find/validate independent building and tree heights; score short corridor with provenance and uncertainty.
 5. Improve edge segmentation and constrained route candidate coverage; test hot/cold policies with actual known shade.
 6. Test on campus with GPS and finish launch experience.
+## Backend-only recent route history (2026-10-17)
+
+- Added opt-in SQLite snapshots for the newest five distinct ordered campus POI pairs per private installation UUID. Repeated searches update recency; coordinate/GPS queries and failed route calculations are not saved. Database files remain gitignored.
+- `POST /api/routes` retains its existing body and fresh calculation behavior; optional `X-Route-History-Key` enables saving. Two GET history endpoints return original request/conditions/results with an explicit historical flag, without invoking route or shade calculation. See contract v0.5 for future mobile integration.
+- Verified **126 backend tests passed**, including six history cases covering persistence across connections, no recomputation, eviction/update, device isolation, coordinate exclusion, storage errors and concurrent writes. Used project-local temporary databases with unrestricted local test runner because restricted FastAPI tests stalled and the default system temporary directory denied access. Existing dependency deprecation warnings remain.
+- `git diff --check` and skill mirror verification passed. Frontend history UI, live device integration and account authentication are **NOT implemented / NOT RUN**. Existing mobile behavior is unchanged by this slice.

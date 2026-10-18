@@ -25,6 +25,8 @@ class EndpointTooFar(Exception):
 
 
 def build_routes(origin: tuple[float,float], destination: tuple[float,float], when: datetime, temperature_c: float) -> RoutesResponse:
+    # HTTP contract uses Celsius; routing policy uses Fahrenheit.
+    temperature_f = temperature_c * 9 / 5 + 32
     try:
         graph=load_graph()
     except GraphDataUnavailable as exc:
@@ -65,7 +67,17 @@ def build_routes(origin: tuple[float,float], destination: tuple[float,float], wh
         return profiles[edge_ref]
 
     paths=[fastest_path]
-    if field.status=='daylight' and field.coverage_geometry is not None:
+    # the shade search can only help when the fastest path itself has known
+    # exposure everywhere; otherwise its result is discarded below. scoring the
+    # fastest path first skips scoring thousands of nearby edges for nothing in
+    # places we have no data for yet. when better shade data (for example a
+    # vision model filling in unknown areas) adds shadows or coverage to the
+    # field, those paths pass this check and get the full search automatically.
+    def known(edge_ref):
+        score=profile(edge_ref)[3]
+        return score.sun_seconds is not None and score.unknown_seconds <= .01
+    fastest_known=all(known(edge_ref) for edge_ref in fastest_path)
+    if fastest_known and field.status=='daylight' and field.coverage_geometry is not None:
         max_duration=min(fastest_duration*1.6,fastest_duration+720)
         edge_refs=bounded_edge_refs(graph,source,target,max_duration,SPEED_MPS)
         costs={}
@@ -75,7 +87,7 @@ def build_routes(origin: tuple[float,float], destination: tuple[float,float], wh
                 continue
             costs[edge_ref]=EdgeCost(duration,float(score.sun_seconds))
         if all(edge_ref in costs for edge_ref in fastest_path):
-            weights=(0.,shade_weight(temperature_c),.5,1.,2.,4.,8.)
+            weights=(0.,shade_weight(temperature_f),.5,1.,2.,4.,8.)
             searched=candidate_edge_paths(costs,source,target,weights)
             paths=list(dict.fromkeys((fastest_path,*searched)))
 
@@ -100,7 +112,7 @@ def build_routes(origin: tuple[float,float], destination: tuple[float,float], wh
             total_unknown += score.unknown_seconds
         candidate=Candidate(tuple(path),total_time,round(total_sun,4) if total_unknown <= .01 else None,total_unknown)
         catalog[candidate.path]=(candidate,points,segments,total_len,build_steps(legs))
-    selected=choose_routes([r[0] for r in catalog.values()],temperature_c)
+    selected=choose_routes([r[0] for r in catalog.values()],temperature_f)
     items=[]; first_for={}
     for mode,candidate in selected.items():
         c,coords,segments,distance,steps=catalog[candidate.path]

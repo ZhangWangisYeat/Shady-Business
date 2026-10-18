@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Dimensions, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import Mapbox, { Camera, MapView, ShapeSource, LineLayer, CircleLayer, SymbolLayer, Images, type MapState } from '@rnmapbox/maps';
 import type { Coordinate, Place, Route } from '../api/types';
-import { revealSegments } from './routeDrawing';
+import { revealLine, revealSegments } from './routeDrawing';
 import { fitCamera } from './fitCamera';
 import { COLORS } from '../theme';
 
@@ -33,14 +33,23 @@ type Props = {
   onDrawn?: () => void;
   // which way the blue dot is facing, degrees clockwise from north
   heading?: number | null;
+  // asks for a gps fix when the compass is tapped before we know where you are
+  onLocate?: () => Promise<Coordinate | null>;
 };
 
 
 const canonical = (r: Route) => r.same_as ?? r.id;
 
-export function ShadyMap({ routes, activeMode, origin, originIsCurrent = false, destination, destinationIsCurrent = false, position, navigating, calculating, insets, onDrawn, heading = null }: Props) {
+export function ShadyMap({ routes, activeMode, origin, originIsCurrent = false, destination, destinationIsCurrent = false, position, navigating, calculating, insets, onDrawn, heading = null, onLocate }: Props) {
   const active = routes.find(r => r.mode === activeMode) ?? null;
-  const [drawn, setDrawn] = useState(1);
+  // each draw progress remembers which route(s) it belongs to. a plain number
+  // still said "fully drawn" from the last route on the first frame of a new
+  // one, so the whole new line flashed on screen before the draw-in started.
+  const [draw, setDraw] = useState<{ route: Route | null; t: number }>({ route: null, t: 0 });
+  const [altDraw, setAltDraw] = useState<{ routes: Route[] | null; t: number }>({ routes: null, t: 0 });
+  const drawn = draw.route === active ? draw.t : 0;
+  const altDrawn = altDraw.routes === routes ? altDraw.t : 0;
+  const [located, setLocated] = useState<Coordinate | null>(null);
   const [pulse, setPulse] = useState(0);
   const drawnCallback = useRef(onDrawn);
   drawnCallback.current = onDrawn;
@@ -55,17 +64,35 @@ export function ShadyMap({ routes, activeMode, origin, originIsCurrent = false, 
   // tells the sheet it's done, otherwise the sheet would wait forever.
   useEffect(() => {
     if (!active) return;
-    setDrawn(0);
-    const duration = drawMs(active.distance_m);
+    const route = active;
+    setDraw({ route, t: 0 });
+    const duration = drawMs(route.distance_m);
     const started = Date.now();
     let frame = requestAnimationFrame(function tick() {
       const t = Math.min(1, (Date.now() - started) / duration);
-      setDrawn(easeInOut(t));
+      setDraw({ route, t: easeInOut(t) });
       if (t < 1) frame = requestAnimationFrame(tick);
       else drawnCallback.current?.();
     });
     return () => cancelAnimationFrame(frame);
   }, [active]);
+
+  // the other routes draw in alongside the chosen one, but only when a new set
+  // of routes arrives. picking a different card redraws just that route, and
+  // the rest stay where they are.
+  useEffect(() => {
+    if (!routes.length) return;
+    const set = routes;
+    setAltDraw({ routes: set, t: 0 });
+    const duration = drawMs(active?.distance_m ?? 0);
+    const started = Date.now();
+    let frame = requestAnimationFrame(function tick() {
+      const t = Math.min(1, (Date.now() - started) / duration);
+      setAltDraw({ routes: set, t: easeInOut(t) });
+      if (t < 1) frame = requestAnimationFrame(tick);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [routes]);
 
   // while we wait on the gps fix and the backend, a soft ring pulses out of the
   // start (or the destination, until we know where you are)
@@ -85,12 +112,11 @@ export function ShadyMap({ routes, activeMode, origin, originIsCurrent = false, 
     return { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: line[line.length - 1] } };
   }, [activeShape, drawn]);
   const alternatives = useMemo(() => {
-    // the other options only show up once the main line has finished drawing
-    if (drawn < 1) return { type: 'FeatureCollection', features: [] };
     const seen = new Set(active ? [canonical(active)] : []);
     const lines = routes.filter(r => { const key = canonical(r); if (seen.has(key)) return false; seen.add(key); return true; });
-    return { type: 'FeatureCollection', features: lines.map((r, i) => ({ type: 'Feature', id: i, properties: {}, geometry: r.geometry })) };
-  }, [routes, active, drawn >= 1]);
+    const features = lines.map((r, i) => ({ type: 'Feature', id: i, properties: {}, geometry: { type: 'LineString', coordinates: revealLine(r.geometry.coordinates, altDrawn) } }));
+    return { type: 'FeatureCollection', features: features.filter(f => f.geometry.coordinates.length >= 2) };
+  }, [routes, active, altDrawn]);
   const ends = useMemo(() => ({
     type: 'FeatureCollection',
     features: [origin && !originIsCurrent && { place: origin, role: 'origin' }, destination && !destinationIsCurrent && { place: destination, role: 'destination' }]
@@ -100,7 +126,7 @@ export function ShadyMap({ routes, activeMode, origin, originIsCurrent = false, 
   // the fix the route was planned from
   const you = navigating && position ? position
     : originIsCurrent && origin ? origin.coordinate
-    : destinationIsCurrent && destination ? destination.coordinate : null;
+    : destinationIsCurrent && destination ? destination.coordinate : located;
   const youShape = useMemo(() => you ? { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: you } } : null, [you?.[0], you?.[1]]);
 
   const padding = { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 24, paddingLeft: 40, paddingRight: 40 };
@@ -139,7 +165,7 @@ export function ShadyMap({ routes, activeMode, origin, originIsCurrent = false, 
       // stepping into the route: close, tilted, facing the way you face
       flownIn.current = true;
       flyingUntil.current = Date.now() + 950;
-      camera.current?.setCamera({ centerCoordinate: you, zoomLevel: 18.5, pitch: 45, ...(faceUp && heading !== null ? { heading } : {}), padding, animationDuration: 900 });
+      camera.current?.setCamera({ centerCoordinate: you, zoomLevel: fitPoints ? 18.5 : 17, pitch: fitPoints ? 45 : 0, ...(faceUp && heading !== null ? { heading } : {}), padding, animationDuration: 900 });
       return;
     }
     // after that only the center (and direction) follow you, so a pinch zoom
@@ -171,11 +197,14 @@ export function ShadyMap({ routes, activeMode, origin, originIsCurrent = false, 
       setFaceUp(next);
       return;
     }
-    // no route yet: just heading-up vs north-up
-    if (faceUp || heading === null) {
-      setFaceUp(false);
-      camera.current?.setCamera({ heading: 0, animationDuration: 500 });
-    } else setFaceUp(true);
+    // no route yet: the compass just takes you to where you are, and back out
+    if (zoomed) {
+      flyingUntil.current = Date.now() + 700;
+      setZoomed(false); setFaceUp(false);
+      return;
+    }
+    setZoomed(true); setFaceUp(false);
+    if (!you) void onLocate?.().then(coordinate => { if (coordinate) setLocated(coordinate); else setZoomed(false); });
   };
   const cameraChanged = (state: MapState) => {
     const b = state.properties.heading;
@@ -210,7 +239,8 @@ export function ShadyMap({ routes, activeMode, origin, originIsCurrent = false, 
       }} />
     </ShapeSource>}
     <ShapeSource id="shady-alternatives" shape={alternatives as any}>
-      <LineLayer id="shady-alternatives-line" style={{ lineColor: '#9A9A9A', lineWidth: 5, lineOpacity: 0.8, lineCap: 'round', lineJoin: 'round' }} />
+      {/* faded so the chosen route reads as the one you're taking, even mid-draw */}
+      <LineLayer id="shady-alternatives-line" style={{ lineColor: '#8E8E8E', lineWidth: 4.5, lineOpacity: 0.45, lineCap: 'round', lineJoin: 'round' }} />
     </ShapeSource>
     <ShapeSource id="shady-route" shape={activeShape as any}>
       <LineLayer id="shady-outline" style={{ lineColor: '#ffffff', lineWidth: 10, lineOpacity: .95, lineCap: 'round', lineJoin: 'round' }} />
@@ -239,9 +269,11 @@ export function ShadyMap({ routes, activeMode, origin, originIsCurrent = false, 
   </MapView>
     <TouchableOpacity accessibilityLabel={zoomed ? 'Show the whole route' : 'Zoom in on your location'}
       style={[styles.compass, { top: insets.top + 8 }, (zoomed || faceUp) && styles.compassOn]} onPress={tapCompass}>
-      {/* the needle counter-rotates against the map, so red always points at real north */}
-      <View style={{ alignItems: 'center', transform: [{ rotate: `${-mapBearing}deg` }] }}>
+      {/* the needle counter-rotates against the map, so red always points at real north.
+          it's drawn from border triangles rather than an image so it stays sharp at any density. */}
+      <View style={[styles.needle, { transform: [{ rotate: `${-mapBearing}deg` }] }]}>
         <View style={styles.needleNorth} /><View style={styles.needleSouth} />
+        <View style={styles.needlePin} />
       </View>
     </TouchableOpacity>
   </View>;
@@ -250,8 +282,13 @@ export function ShadyMap({ routes, activeMode, origin, originIsCurrent = false, 
 const styles = StyleSheet.create({
   missing: { ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.fill, padding: 30 },
   missingText: { textAlign: 'center', color: COLORS.ink, fontSize: 16 },
-  compass: { position: 'absolute', right: 12, width: 46, height: 46, borderRadius: 23, backgroundColor: COLORS.ink, alignItems: 'center', justifyContent: 'center', elevation: 6 },
-  compassOn: { borderWidth: 2.5, borderColor: COLORS.here },
-  needleNorth: { width: 0, height: 0, borderLeftWidth: 6, borderRightWidth: 6, borderBottomWidth: 15, borderLeftColor: 'transparent', borderRightColor: 'transparent', borderBottomColor: '#E5483B' },
-  needleSouth: { width: 0, height: 0, borderLeftWidth: 6, borderRightWidth: 6, borderTopWidth: 15, borderLeftColor: 'transparent', borderRightColor: 'transparent', borderTopColor: '#ffffff' },
+  // no overflow: 'hidden' here, and the border is always 2.5 wide (just
+  // transparent when off). on android, clipping a rounded view that has a
+  // rotated child, then changing its border on tap, made the contents vanish.
+  compass: { position: 'absolute', right: 12, width: 48, height: 48, borderRadius: 24, backgroundColor: COLORS.ink, alignItems: 'center', justifyContent: 'center', elevation: 6, borderWidth: 2.5, borderColor: 'transparent' },
+  compassOn: { borderColor: COLORS.here },
+  needle: { width: 12, height: 34, alignItems: 'center' },
+  needleNorth: { width: 0, height: 0, borderLeftWidth: 5, borderRightWidth: 5, borderBottomWidth: 17, borderLeftColor: 'transparent', borderRightColor: 'transparent', borderBottomColor: '#E5483B' },
+  needleSouth: { width: 0, height: 0, borderLeftWidth: 5, borderRightWidth: 5, borderTopWidth: 17, borderLeftColor: 'transparent', borderRightColor: 'transparent', borderTopColor: '#F2F2F2' },
+  needlePin: { position: 'absolute', top: 14, left: 3, width: 6, height: 6, borderRadius: 3, backgroundColor: COLORS.ink, borderWidth: 1.5, borderColor: '#F2F2F2' },
 });
