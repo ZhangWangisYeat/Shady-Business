@@ -26,7 +26,7 @@ test('dropdown starts collapsed and displays no more than five saved routes', as
   jest.mocked(api.getRouteHistory).mockResolvedValue({
     items: Array.from({ length: 6 }, (_, i) => ({ ...saved, id: `saved-${i}` })),
   });
-  await render(<App />);
+  await render(<RecentRoutes places={places} onSelect={jest.fn()} />);
   await screen.findByText('Recent routes · 5');
   expect(screen.queryByText('Royce Hall → Powell Library')).toBeNull();
   await fireEvent.press(screen.getByRole('button', { name: 'Recent routes' }));
@@ -81,6 +81,22 @@ test('history failure offers a local retry and does not block ordinary search', 
   expect(screen.getByText('Find walking routes')).toBeTruthy();
   await fireEvent.press(screen.getByRole('button', { name: 'Retry' }));
   await screen.findByText('Royce Hall → Powell Library');
+});
+
+test('starting a saved-route demo cancels an in-flight update and keeps its preview', async () => {
+  let finish!: (value: typeof result) => void;
+  jest.mocked(api.getRoutes).mockReturnValue(new Promise(resolve => { finish = resolve; }));
+  await render(<App />);
+  await screen.findByText('Recent routes · 1');
+  await fireEvent.press(screen.getByRole('button', { name: 'Recent routes' }));
+  await fireEvent.press(screen.getByRole('button', { name: /View saved route:/ }));
+  await fireEvent.press(screen.getByText('Update for guided walk'));
+  await fireEvent.press(screen.getByText('Demo walk (no GPS)'));
+  await act(async () => { finish(result); });
+  expect(screen.getByText('Demo navigation')).toBeTruthy();
+  expect(screen.queryByText('Choose your walk')).toBeNull();
+  await fireEvent.press(screen.getByText('End navigation'));
+  expect(screen.getByText(/Historical shade estimate/)).toBeTruthy();
 });
 
 test('empty and loading states stay inside the dropdown', async () => {

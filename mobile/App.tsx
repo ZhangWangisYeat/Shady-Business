@@ -81,7 +81,7 @@ export default function App() {
   const selected=(mode:Route['mode'])=>{setChosen(mode);setPosition(null);setProgress(0);};
   const complete=()=>{stop();setStage('arrived');};
   const startDemo=()=>{
-    if(!active)return;stop();setError(null);setNavigationIssue(null);setDemo(true);setStage('navigate');setProgress(0);setShade(statusByTimeFraction(active,0));
+    if(!active)return;routeRequest.current++;setLoading(false);stop();setError(null);setNavigationIssue(null);setDemo(true);setStage('navigate');setProgress(0);setShade(statusByTimeFraction(active,0));
     setPosition(interpolateRoute(active,0)); let tick=0;
     interval.current=setInterval(()=>{
       tick++; const f=Math.min(1,tick/75);setProgress(f);setPosition(interpolateRoute(active,f));setShade(statusByTimeFraction(active,f));
