@@ -68,6 +68,8 @@ coverage.xml
 /backend/data/*
 !/backend/data/README.md
 !/backend/data/.gitkeep
+!/backend/data/ucla_buildings.geojson
+!/backend/data/ucla_trees.geojson
 /local-data/
 /logs/
 *.graphml
