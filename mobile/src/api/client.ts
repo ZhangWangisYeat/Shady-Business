@@ -56,6 +56,7 @@ async function json<T>(path: string, init?: RequestInit, timeoutMs=9000): Promis
 }
 export const searchPlaces = (query: string, limit = 8) =>
   json<PlacesResponse>(`/api/places?q=${encodeURIComponent(query)}&limit=${limit}`, undefined, 5000);
+export const getVoiceToken = () => json<{ token: string }>('/api/voice/token', { method: 'POST' }, 8000);
 export const getRouteHistory = async () => json<{ items: SavedRoute[] }>('/api/routes/history', {
   headers: { 'X-Route-History-Key': await getHistoryKey() },
 });

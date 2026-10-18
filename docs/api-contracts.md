@@ -1,4 +1,8 @@
-# Shady Business mobile ↔ FastAPI contract v0.5
+# Shady Business mobile ↔ FastAPI contract v0.6
+
+## Opt-in voice destination input
+
+`POST /api/voice/token` returns `{"token":"<ElevenLabs single-use realtime_scribe token>"}` for a foreground microphone session. The backend reads `ELEVENLABS_API_KEY` from its environment and never sends it to the app. Missing configuration returns 503 `VOICE_UNAVAILABLE`; provider failure returns 502 `VOICE_UNAVAILABLE`; more than five token requests per client IP per minute returns 429 `VOICE_RATE_LIMITED`. Tokens are obtained only when the user taps the microphone. The mobile app connects directly to ElevenLabs Scribe realtime WebSocket with the single-use token, streams 16 kHz mono int16 PCM, and uses only `committed_transcript` to propose UCLA place matches. Both endpoints require user confirmation before `/api/routes`; no audio or transcript is stored in route history. Voice is foreground-only and text search remains available.
 
 Actual schema lives in `backend/app/api/schemas.py`; mirror DTOs in `mobile/src/api/types.ts`. GeoJSON is WGS84 `[longitude,latitude]`; distances meters, durations seconds, temperature Celsius, ISO 8601 offset-aware departure timestamps. Backend contract tests are implemented; physical-device integration remains a separate gate.
 

@@ -29,6 +29,7 @@ module.exports = {
     plugins: [
       '@rnmapbox/maps',
       'expo-secure-store',
+      ['expo-audio', { microphonePermission: 'Speak a UCLA destination to search for a walk.', enableBackgroundPlayback: false }],
       ['expo-location', { locationWhenInUsePermission: 'Show your location to guide your walk.' }],
       ...(usesHttp ? [allowHttp] : [])
     ],

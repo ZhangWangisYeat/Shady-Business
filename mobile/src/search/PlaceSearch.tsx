@@ -3,6 +3,8 @@ import { Image, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpac
 import { searchPlaces } from '../api/client';
 import type { Place } from '../api/types';
 import { COLORS } from '../theme';
+import { VoiceInput } from './VoiceInput';
+import { parseVoiceQuery } from './voiceQuery';
 
 const LOGO = require('../brand/logo.png');
 
@@ -34,6 +36,8 @@ export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChan
   const [results, setResults] = useState<Place[]>([]);
   const [attribution, setAttribution] = useState('');
   const [searchError, setSearchError] = useState('');
+  const [voiceMatch, setVoiceMatch] = useState<{ origin: StartPoint; destination: Place } | null>(null);
+  const [voiceError, setVoiceError] = useState('');
   const latest = useRef(0);
   const inputs = { origin: useRef<TextInput>(null), destination: useRef<TextInput>(null) };
   // blur events land after the parent re-renders (or sometimes before), so the
@@ -96,6 +100,24 @@ export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChan
     setText(t => ({ ...t, [field]: '' }));
     inputs[field].current?.focus();
   };
+  const heard = async (transcript: string) => {
+    setVoiceMatch(null); setVoiceError('');
+    const spoken = parseVoiceQuery(transcript);
+    if (!spoken) { setVoiceError('No destination heard. Please try again.'); return; }
+    try {
+      const fromHere = spoken.origin && /^(?:my location|current location|here|我现在的位置|当前位置)$/i.test(spoken.origin);
+      const [start, end] = await Promise.all([
+        spoken.origin && !fromHere ? searchPlaces(spoken.origin, 3) : null,
+        searchPlaces(spoken.destination, 3),
+      ]);
+      const origin = fromHere ? 'current' : spoken.origin ? start?.places[0] ?? null : selected.current.origin;
+      const destination = end.places[0];
+      if (!origin || !destination || (origin !== 'current' && origin.id === destination.id)) {
+        setVoiceError('Could not match both places. Try speaking their UCLA names or type them.'); return;
+      }
+      setVoiceMatch({ origin, destination });
+    } catch { setVoiceError('Place search failed. Please try again.'); }
+  };
 
   const row = (field: Field) => (
     <View style={styles.row}>
@@ -107,6 +129,7 @@ export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChan
         onChangeText={value => setText(t => ({ ...t, [field]: value }))}
         onSubmitEditing={() => { if (results[0]) choose(results[0]); }}
       />
+      {field === 'destination' && <VoiceInput onTranscript={heard} />}
       {!!text[field] && focus === field && (
         <TouchableOpacity hitSlop={10} onPress={() => clear(field)}><Text style={styles.clear}>✕</Text></TouchableOpacity>
       )}
@@ -134,6 +157,15 @@ export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChan
           </View>
         </View>
       </View>
+      {voiceMatch && <View style={styles.voiceConfirm}>
+        <Text style={styles.resultName}>From {label(voiceMatch.origin)} to {voiceMatch.destination.name}?</Text>
+        <Text style={styles.resultMeta}>Confirm these UCLA places before finding a route.</Text>
+        <TouchableOpacity accessibilityRole="button" accessibilityLabel="Confirm spoken route" onPress={() => {
+          onSelect('origin', voiceMatch.origin); onSelect('destination', voiceMatch.destination); setVoiceMatch(null); focusField(null); Keyboard.dismiss();
+        }}><Text style={styles.voiceAction}>Confirm route</Text></TouchableOpacity>
+        <TouchableOpacity accessibilityRole="button" accessibilityLabel="Cancel spoken route" onPress={() => setVoiceMatch(null)}><Text style={styles.resultMeta}>Cancel</Text></TouchableOpacity>
+      </View>}
+      {!!voiceError && <Text style={styles.error}>{voiceError}</Text>}
       {focus && (
         <View style={styles.dropdown}>
           {focus === 'origin' && origin !== 'current' && destination !== 'current' && (
@@ -203,4 +235,6 @@ const styles = StyleSheet.create({
   resultMeta: { fontSize: 12, color: COLORS.muted },
   metaLine: { marginTop: 2 },
   attribution: { fontSize: 10, color: COLORS.muted, paddingHorizontal: 16, paddingVertical: 6, textAlign: 'right' },
+  voiceConfirm: { borderTopWidth: 1, borderColor: COLORS.rule, paddingHorizontal: 16, paddingVertical: 10, gap: 5 },
+  voiceAction: { color: COLORS.ink, fontSize: 14, fontWeight: '700', paddingVertical: 5 },
 });

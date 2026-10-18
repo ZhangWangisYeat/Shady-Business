@@ -12,8 +12,14 @@ from app.shade.model import ShadeDataUnavailable, load_model, model_coverage_sta
 from app.routing import history
 from app.weather import nws
 from datetime import datetime, timezone
+import json
+import os
+import time
+from urllib.error import HTTPError, URLError
+from urllib.request import Request as UrlRequest, urlopen
 
 app=FastAPI(title="Shady Business API",version="0.1.0")
+_voice_tokens: dict[str, list[float]] = {}
 # Local development via native devices does not use browser CORS; set explicit origins for any web client later.
 
 
@@ -22,6 +28,31 @@ def problem(code: str, message: str, *, retryable: bool=False, field: str | None
     if field is not None:
         detail['field']=field
     return detail
+
+
+@app.post('/api/voice/token')
+def voice_token(request: Request, response: Response):
+    """Issue a short-lived Scribe token without exposing the ElevenLabs API key."""
+    key = os.getenv('ELEVENLABS_API_KEY')
+    if not key:
+        raise HTTPException(status_code=503, detail=problem('VOICE_UNAVAILABLE', 'Voice input is not configured.', retryable=True))
+    peer = request.client.host if request.client else 'unknown'
+    now = time.monotonic()
+    recent = [t for t in _voice_tokens.get(peer, []) if now - t < 60]
+    if len(recent) >= 5:
+        raise HTTPException(status_code=429, detail=problem('VOICE_RATE_LIMITED', 'Wait a moment before trying voice input again.', retryable=True))
+    _voice_tokens[peer] = recent + [now]
+    upstream = UrlRequest('https://api.elevenlabs.io/v1/single-use-token/realtime_scribe',
+                          data=b'', headers={'xi-api-key': key}, method='POST')
+    try:
+        with urlopen(upstream, timeout=5) as upstream_response:
+            token = json.load(upstream_response).get('token')
+        if not isinstance(token, str) or not token:
+            raise ValueError('missing token')
+    except (HTTPError, URLError, TimeoutError, ValueError, OSError) as exc:
+        raise HTTPException(status_code=502, detail=problem('VOICE_UNAVAILABLE', 'Voice input is temporarily unavailable.', retryable=True)) from exc
+    response.headers['Cache-Control'] = 'no-store'
+    return {'token': token}
 
 
 @app.exception_handler(RequestValidationError)
