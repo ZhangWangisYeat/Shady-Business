@@ -35,7 +35,7 @@ data/                           # license-vetted, bounded geodata
 
 **Stage 3, graph edge scoring:** densify each pedestrian edge geometry into points every ~2–5 m, project into shadow polygons at the **approximate time user traverses that point**, assign `sun`, `shade`, `unknown`. Estimate `sun_seconds = edge_duration × known_sun_fraction`; record `unknown_seconds`, known fraction and source vintage. For first milestone, static score at departure time with documented approximation; later step/time buckets (~5–15 min). Distinguish road centerline from correct sidewalk side; GPS ± several meters and canopy misregistration can flip state.
 
-**Stage 4, route optimizer:** `Fastest` = shortest time with A*/Dijkstra. Current code enumerates up to 12 shortest-by-length paths; **this is not sufficient for global shade optimality**. Next implement edge-sun weighted and Pareto candidate search, dedupe, then validate each against the fastest duration and detour caps. Max Shade minimize sun seconds under cap; Recommended minimize `time + lambda(temperature) × sun_seconds` under tighter cap. When candidate enumeration is approximate, don't claim provable global optimum. Fallback to Fastest for unknown coverage / unusable weather; provide uncertainty, not fake values. Tests should verify monotonic shade preference on fixed graph, strict caps, tie behavior, duplicate routes and unknown data.
+**Stage 4, route optimizer:** `Fastest` = shortest time with Dijkstra. The current bounded candidate search uses request-scoped edge time/sun costs and multiple time-plus-sun weights over completely scored edges, then deduplicates paths and applies the fastest-relative detour caps. Unknown edges are excluded rather than treated as shade or zero exposure; if Fastest itself is incomplete, all modes fall back to Fastest. Max Shade minimizes sun seconds among explored candidates under its cap. Recommended minimizes `time + lambda(temperature) × sun_seconds`; its maximum detour is 15% below 25°C, 25% from 25°C to below 30°C, and 35% at 30°C or above, while `lambda` rises continuously from zero near 18.3°C to 2.0 near 32.2°C. These are product heuristics, not medical heat thresholds, and the candidate search is not a proof of global shade optimality.
 
 **Stage 5, mobile navigation:** GPS watcher foreground only; map-match nearest plausible location along route respecting reported accuracy, smoothing/hysteresis to prevent shade indicator flicker. Project current estimated position/time to shaded/unknown segments; show `Shade unknown` with poor GPS or incomplete model. Debounced off-route warning, simple maneuver cues, arrival when within destination radius **and** plausible progress. The demo simulator emits equivalent location samples and never passes as GPS.
 
@@ -68,9 +68,13 @@ data/                           # license-vetted, bounded geodata
 ## What is in the initial repository (October 17, 2026)
 - `mobile/App.tsx`: native bottom-sheet-style interface with campus place chips, route comparison, temperature override, route preview, demo/GPS guidance, and arrival/reset. **Not device-tested.**
 - `mobile/src/map/ShadyMap.tsx`: Mapbox Standard native view, routes colored by backend `shade_state` plus basic camera following. **Not device-tested.**
-- `backend/app/main.py`: health / places / routes endpoints. `app/routing/graph.py`: live downloaded OSM graph loading, 12 shortest-by-length candidate search; API refuses to fake routes when missing.
+- `backend/app/main.py`: health / places / routes endpoints. `app/routing/graph.py`: live downloaded OSM graph loading and keyed edge geometry. `app/routing/candidates.py`: bounded multi-weight search over completely scored pedestrian edges; API refuses to fake routes when Fastest exposure is incomplete.
 - `backend/app/shade/model.py`: optional building-only planar geometric projected shadows from a license-vetted GeoJSON with `height_m`. This is **model source code only**: no valid UCLA file is bundled and real-world shade accuracy is not verified.
 - `backend/app/routing/policy.py`: deterministic temperature-weighted candidate selection and detour caps. Offline tests run.
+- `/api/routes` exposes per-route coverage fraction plus separate model-coverage
+  and solar-status fields, so loaded but unverified geometry cannot be presented
+  as verified sun exposure. FastAPI validates the response model and mobile DTOs
+  mirror the same additive v0.4 fields.
 - **Important correctness guard:** no shade file -> unknown, not sunny; inability to show a shorter hot route is intentional until data is validated.
 
 ## Production hardening not done
