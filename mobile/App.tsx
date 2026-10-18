@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Platform, ScrollView, TextInput, StatusBar as RNStatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, Platform, ScrollView, TextInput, StatusBar as RNStatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as Location from 'expo-location';
 import { ShadyMap } from './src/map/ShadyMap';
@@ -11,6 +11,10 @@ import type { Coordinate, Place, Route, RouteEndpoint, RoutesResponse, ShadeStat
 import { interpolateRoute, locateOnRoute, meters } from './src/navigation/progress';
 import { MANEUVER_ICON, formatDistance, stepProgress } from './src/navigation/steps';
 import { COLORS } from './src/theme';
+import { Intro, type Target } from './src/brand/Intro';
+import { Traveler, type Spot } from './src/brand/Traveler';
+
+const HOME_LOGO = require('./src/brand/logo-intro.png');
 import { exposure } from './src/plan/exposure';
 import { cardLabel, defaultMode, visibleRoutes } from './src/plan/visibleRoutes';
 
@@ -86,6 +90,29 @@ export default function App() {
   const [position, setPosition] = useState<Coordinate | null>(null);
   const [shade, setShade] = useState<ShadeState>('unknown');
   const [cardHeight, setCardHeight] = useState(120);
+  // the intro plays on launch, and again when you tap the logo on the home screen
+  const [intro, setIntro] = useState(true);
+  // the logo lives in one of two spots: next to "Where to?" on the home screen,
+  // or in the search card's corner once you're searching or looking at routes.
+  // moving between them, he hops out of the screen and walks over (Traveler).
+  const logoRef = useRef<View>(null);
+  const homeLogoRef = useRef<View>(null);
+  const [logoAt, setLogoAt] = useState<'home' | 'card'>('home');
+  const [trip, setTrip] = useState<{ from: Spot; to: Spot; at: 'home' | 'card' } | null>(null);
+  // where each spot is on screen, kept from their last layout. the home one is
+  // gone the moment a search box opens (the sheet hides for the keyboard), so
+  // he has to start from where it was.
+  const spots = useRef<{ home?: Spot; card?: Spot }>({});
+  // set by the two things that make him walk; anything else moves him without a trip
+  const walkNext = useRef(false);
+  const measure = (ref: React.RefObject<View | null>, key: 'home' | 'card') => new Promise<Spot | null>(resolve => {
+    if (!ref.current) { resolve(spots.current[key] ?? null); return; }
+    ref.current.measureInWindow((x, y, width) => {
+      if (width) spots.current[key] = { x, y, size: width };
+      resolve(spots.current[key] ?? null);
+    });
+  });
+  const measureLogo = () => measure(homeLogoRef, 'home') as Promise<Target | null>;
   const [sheetHeight, setSheetHeight] = useState(260);
   const subscription = useRef<Location.LocationSubscription | null>(null);
   // how far along the route the dot is drawn, kept outside state so the gps
@@ -214,6 +241,9 @@ export default function App() {
   // saved as they're calculated and the dropdown is the only place they show.
   // history is a nice-to-have, so if it fails the dropdown just has no recents.
   const searchFocus = (focused: boolean) => {
+    // opening a search box from the home screen is one of the two things that
+    // send him walking (up to the search card)
+    if (focused && logoAt === 'home') walkNext.current = true;
     setSearchFocused(focused);
     if (focused && (origin === 'current' || destination === 'current')) void warmUpLocation();
     if (focused) getRouteHistory().then(async response => {
@@ -261,6 +291,32 @@ export default function App() {
   const endNavigation = () => { stop(); setNavigationIssue(null); setWalkSteps(false); setCompact(false); setStage('plan'); setPosition(null); setProgress(0); };
   const reset = () => { stop(); setNavigationIssue(null); setStage('plan'); setOrigin('current'); setDestination(null); setPosition(null); setProgress(0); setShade('unknown'); setError(''); };
 
+  // he belongs next to "Where to?" while that screen is showing, and in the
+  // search card the rest of the time. whenever that changes he walks over. a
+  // change in the middle of a trip waits for him to land, then this runs again.
+  const homeShowing = stage === 'plan' && !destination && !searchFocused;
+  const logoWants = homeShowing ? 'home' : 'card';
+  useEffect(() => {
+    if (intro || trip || logoWants === logoAt) return;
+    let cancelled = false;
+    // a moment for the screen he's heading to to lay out (the home sheet comes
+    // back when the keyboard closes) before measuring where he's going
+    const timer = setTimeout(async () => {
+      const [home, card] = await Promise.all([measure(homeLogoRef, 'home'), measure(logoRef, 'card')]);
+      if (cancelled) return;
+      const from = logoAt === 'home' ? home : card;
+      const to = logoWants === 'home' ? home : card;
+      // he only walks when one of the two triggers asked for it. any other way
+      // of getting here (closing the keyboard, "Plan another walk") just puts
+      // him in place, and so does an end that isn't on screen (no card mid-walk)
+      const walk = walkNext.current;
+      walkNext.current = false;
+      if (walk && from && to) setTrip({ from, to, at: logoWants });
+      else setLogoAt(logoWants);
+    }, 60);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [logoWants, logoAt, trip, intro]);
+
   const sunStat = (route: Route) => {
     const e = exposure(route);
     return e.sunPct === null ? <Stat value="—" label="Sun" /> : <Stat value={`${e.sunPct}%`} label={e.unknownPct ? `Sun, ${e.unknownPct}% unknown` : 'Sun'} />;
@@ -299,7 +355,15 @@ export default function App() {
   const plan = () => {
     if (!destination) return <>
       <Text style={styles.eyebrow}>{fromHere ? 'From your location' : 'Plan a walk'}</Text>
-      <Text style={styles.heading}>Where to?</Text>
+      <View style={styles.whereRow}>
+        <Text style={styles.heading}>Where to?</Text>
+        {/* his home spot. tapping him here does nothing on purpose: he only
+            walks when a search box opens, or when you tap him up in the card */}
+        <View ref={homeLogoRef} collapsable={false} onLayout={() => void measure(homeLogoRef, 'home')}
+          style={{ opacity: logoAt === 'home' && !trip && !intro ? 1 : 0 }} accessibilityLabel="Shady Business">
+          <Image source={HOME_LOGO} style={styles.homeLogo} fadeDuration={0} />
+        </View>
+      </View>
       <Text style={styles.muted}>Search for any UCLA building, library, café or landmark.</Text>
       {tempRow}
     </>;
@@ -443,7 +507,10 @@ export default function App() {
     <View style={[styles.safe, { paddingTop: TOP_INSET }]} pointerEvents="box-none">
       <View pointerEvents="box-none" onLayout={e => setCardHeight(e.nativeEvent.layout.height + 8)}>
         {stage === 'plan' && <PlaceSearch origin={origin} destination={destination} onSelect={select} onSwap={swap} onFocusChange={searchFocus}
-          recent={recent} onHome={reset} />}
+          recent={recent} logoRef={logoRef} hideLogo={logoAt !== 'card' || !!trip}
+          onLogoLayout={() => void measure(logoRef, 'card')}
+          // tapping him in the card is the other trigger: home, and he walks down
+          onHome={() => { if (logoAt === 'card') walkNext.current = true; reset(); }} />}
       </View>
       <View style={styles.spacer} pointerEvents="none" />
       {!searchFocused && <View style={styles.panel} onLayout={e => setSheetHeight(e.nativeEvent.layout.height)}>
@@ -462,6 +529,8 @@ export default function App() {
         </View>}
       </View>}
     </View>
+    {trip && <Traveler key={`${trip.at}-${trip.from.x}-${trip.from.y}`} from={trip.from} to={trip.to} onDone={() => { setLogoAt(trip.at); setTrip(null); }} />}
+    {intro && <Intro measureTarget={measureLogo} onDone={() => { setLogoAt('home'); setIntro(false); }} />}
   </View>;
 }
 // the look leans on the resume site's house style: square-ish 4 px corners, hairline rules
@@ -471,6 +540,8 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.fill }, safe: { flex: 1 }, spacer: { flex: 1 },
   panel: { backgroundColor: COLORS.paper, paddingHorizontal: 20, paddingTop: 20, paddingBottom: 22, borderTopLeftRadius: 10, borderTopRightRadius: 10, elevation: 10 },
   eyebrow: { fontSize: 11, fontWeight: '600', letterSpacing: 2, textTransform: 'uppercase', color: COLORS.muted },
+  whereRow: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
+  homeLogo: { width: 52, height: 52, marginBottom: 2 },
   heading: { fontSize: 24, fontWeight: '700', color: COLORS.ink, letterSpacing: -0.3, marginTop: 4, marginBottom: 4 },
   muted: { color: COLORS.muted, fontSize: 13, lineHeight: 19 },
   tempRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 14, marginBottom: 4 },

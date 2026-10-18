@@ -20,6 +20,11 @@ type Props = {
   onFocusChange: (focused: boolean) => void;
   // places you've walked to lately, offered before you type
   recent?: Place[];
+  // the intro walks the big logo back onto this spot, so it needs to measure it,
+  // and hides this one meanwhile so there aren't two of him
+  logoRef?: React.RefObject<View | null>;
+  hideLogo?: boolean;
+  onLogoLayout?: () => void;
 };
 
 const PLACEHOLDER: Record<Field, string> = { origin: 'Choose starting point', destination: 'Choose destination' };
@@ -28,7 +33,7 @@ const label = (value: StartPoint) => value === 'current' ? CURRENT_LABEL : value
 const keyOf = (value: StartPoint) => value === 'current' ? 'current' : value?.id ?? '';
 const meta = (place: Place) => (place.address ? `${place.category} @ ${place.address}` : place.category);
 
-export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChange, recent = [], onHome }: Props) {
+export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChange, recent = [], onHome, logoRef, hideLogo, onLogoLayout }: Props) {
   const [text, setText] = useState<Record<Field, string>>({ origin: label(origin), destination: label(destination) });
   const [focus, setFocus] = useState<Field | null>(null);
   const [results, setResults] = useState<Place[]>([]);
@@ -102,8 +107,13 @@ export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChan
       <View style={[styles.marker, field === 'destination' && styles.markerEnd, (field === 'origin' ? origin : destination) === 'current' && styles.markerHere]} />
       <TextInput
         ref={inputs[field]} style={styles.input} value={text[field]} placeholder={PLACEHOLDER[field]}
-        placeholderTextColor={COLORS.muted} selectTextOnFocus autoCorrect={false} returnKeyType="search"
-        onFocus={() => focusField(field)} onBlur={() => blur(field)}
+        placeholderTextColor={COLORS.muted} autoCorrect={false} returnKeyType="search"
+        // opening a box empties it so you can type straight away (leaving without
+        // picking puts the name back). this used selectTextOnFocus, but android
+        // selects everything again on every re-render while the box is focused,
+        // and opening a box re-renders the app, so the first letter you typed
+        // replaced the whole thing
+        onFocus={() => { setText(t => ({ ...t, [field]: '' })); focusField(field); }} onBlur={() => blur(field)}
         onChangeText={value => setText(t => ({ ...t, [field]: value }))}
         onSubmitEditing={() => { if (results[0]) choose(results[0]); }}
       />
@@ -125,7 +135,9 @@ export function PlaceSearch({ origin, destination, onSelect, onSwap, onFocusChan
             branding doesn't cost a row of map. swap sits by the destination row. */}
         <View style={styles.side}>
           <TouchableOpacity style={styles.slot} onPress={goHome} accessibilityRole="button" accessibilityLabel="Shady Business, back to Where to?">
-            <Image source={LOGO} style={styles.logo} />
+            <View ref={logoRef} collapsable={false} onLayout={onLogoLayout} style={{ opacity: hideLogo ? 0 : 1 }}>
+              <Image source={LOGO} style={styles.logo} />
+            </View>
           </TouchableOpacity>
           <View style={styles.slot}>
             <TouchableOpacity style={styles.swap} onPress={onSwap} accessibilityLabel="Swap start and destination">

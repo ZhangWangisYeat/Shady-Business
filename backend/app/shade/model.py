@@ -177,7 +177,7 @@ def solar_angles(when: datetime) -> tuple[float, float]:
     return elevation(observer, when, with_refraction=False), azimuth(observer, when)
 
 
-def build_shadow_field(model: ShadeModel | None, when: datetime) -> ShadowField:
+def build_shadow_field(model: ShadeModel | None, when: datetime, area: BaseGeometry | None = None) -> ShadowField:
     elevation_deg, azimuth_deg = solar_angles(when)
     limitations = LIMITATIONS + ((
         "Tree crowns are opaque ellipsoids; foliage transmission and field accuracy are unverified",
@@ -192,10 +192,38 @@ def build_shadow_field(model: ShadeModel | None, when: datetime) -> ShadowField:
     if model is None:
         return ShadowField(None, None, "unavailable", **info)
     from app.shade.trees import cast_tree_shadow
-    parts = [cast_shadow(base, height, elevation_deg, azimuth_deg) for base, height in model.shapes]
-    parts.extend(cast_tree_shadow(tree, elevation_deg, azimuth_deg) for tree in model.trees)
-    shadows = unary_union(parts)
+    shapes, trees = model.shapes, model.trees
     coverage = model.coverage_geometry if model.coverage_complete_verified else None
+    if area is not None:
+        # once the dataset covered the whole campus (25k+ trees), unioning every
+        # shadow took 10-20 s per request even though a walk only ever touches a
+        # few walkways. so an obstacle is only cast when its own shadow could
+        # reach the area: at this sun angle something h meters tall throws its
+        # shadow at most h / tan(elevation) away (plus its crown or footprint
+        # size), so anything further out can't change a single walkway. the
+        # area can be lines (the walkways themselves). the field is then only
+        # right on those lines, so it must only be asked about them, and a
+        # polygon area also cuts the coverage so nothing outside reads as sunny
+        # just because its shadows were skipped.
+        import numpy as np
+        import shapely
+        cotangent = 1 / tan(radians(elevation_deg))
+        shapely.prepare(area)
+        if shapes:
+            reach = np.array([height * cotangent + 5 for _, height in shapes])
+            keep = shapely.dwithin(np.array([base for base, _ in shapes], dtype=object), area, reach)
+            shapes = tuple(item for item, kept in zip(shapes, keep) if kept)
+        if trees:
+            reach = np.array([t.height_m * cotangent + 2 * t.crown_radius_m + 5 for t in trees])
+            keep = shapely.dwithin(np.array([t.center for t in trees], dtype=object), area, reach)
+            trees = tuple(t for t, kept in zip(trees, keep) if kept)
+        if coverage is not None and area.geom_type in ("Polygon", "MultiPolygon"):
+            coverage = coverage.intersection(area)
+            if coverage.is_empty:
+                coverage = None
+    parts = [cast_shadow(base, height, elevation_deg, azimuth_deg) for base, height in shapes]
+    parts.extend(cast_tree_shadow(tree, elevation_deg, azimuth_deg) for tree in trees)
+    shadows = unary_union(parts)
     return ShadowField(shadows, coverage, "daylight", **info)
 
 

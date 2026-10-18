@@ -98,3 +98,7 @@ pnpm-debug.log*
 Thumbs.db
 .vscode/
 .idea/
+
+# visionlab: cached imagery, trained models (derived from the tree inventory) and results stay local
+/agents/vision/data/
+/agents/.env

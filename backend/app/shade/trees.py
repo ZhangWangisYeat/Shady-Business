@@ -1,11 +1,11 @@
 """Measured tree dimensions with an explicitly approximate opaque crown model."""
 from dataclasses import dataclass
 import json
-from math import cos, isfinite, radians, sin, sqrt, tan
+from math import cos, isfinite, pi, radians, sin, sqrt, tan
 from pathlib import Path
 
 from shapely.affinity import rotate, scale, translate
-from shapely.geometry import Point, shape
+from shapely.geometry import Point, Polygon, shape
 from shapely.geometry.base import BaseGeometry
 
 from app.shade.model import MIN_SOLAR_ELEVATION, PROJECTION, _project_polygon
@@ -78,6 +78,15 @@ def read_tree_model(path: Path) -> TreeDataset:
     )
 
 
+# a 64-sided unit circle, half as many sides as buffer(quad_segs=32) gave,
+# because unioning 25k crowns was most of a request. its corners sit half a step
+# off the axes and a little outside the circle, so every edge touches the true
+# outline at its middle (including on both axes, so widths stay exact) and the
+# polygon covers the whole crown shadow while being under 0.1% too big
+UNIT_CROWN = Polygon([(cos(a) / cos(pi / 64), sin(a) / cos(pi / 64))
+                      for a in ((k + .5) * pi / 32 for k in range(64))])
+
+
 def cast_tree_shadow(tree: TreeCrown, elevation_deg: float, azimuth_deg: float):
     """Ground projection of an opaque ellipsoid aligned with vertical.
 
@@ -103,7 +112,7 @@ def cast_tree_shadow(tree: TreeCrown, elevation_deg: float, azimuth_deg: float):
     center_height = tree.height_m - vertical_radius
     cotangent = 1 / tan(radians(elevation_deg))
     major = sqrt(radius * radius + (vertical_radius * cotangent) ** 2)
-    ellipse = scale(Point(0, 0).buffer(1, quad_segs=32), xfact=major, yfact=radius, origin=(0, 0))
+    ellipse = scale(UNIT_CROWN, xfact=major, yfact=radius, origin=(0, 0))
     ellipse = rotate(ellipse, 270 - azimuth_deg, origin=(0, 0))
     reach = center_height * cotangent
     return translate(ellipse, xoff=tree.center.x - reach * sin(radians(azimuth_deg)),

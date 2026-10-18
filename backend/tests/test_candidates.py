@@ -86,7 +86,7 @@ def test_route_api_ignores_unknown_side_branch_when_complete_candidates_exist(mo
     monkeypatch.setattr(service,"load_graph",lambda:graph)
     monkeypatch.setattr(service,"load_model",lambda:ShadeModel(
         (), "fixture", True, field.coverage_geometry, "synthetic"))
-    monkeypatch.setattr(service,"build_shadow_field",lambda model,when:field)
+    monkeypatch.setattr(service,"build_shadow_field",lambda model,when,area=None:field)
     origin=[graph.nodes["s"]["x"],graph.nodes["s"]["y"]]
     destination=[graph.nodes["t"]["x"],graph.nodes["t"]["y"]]
     response=TestClient(app).post("/api/routes",json={

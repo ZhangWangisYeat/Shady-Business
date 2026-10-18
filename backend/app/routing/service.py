@@ -5,7 +5,8 @@ import networkx as nx
 from app.routing.candidates import EdgeCost, bounded_edge_refs, candidate_edge_paths, fastest_edge_path
 from app.routing.graph import GraphDataUnavailable, SnapUnavailable, load_graph, snap_node, edge_data, coords_for_edge
 from app.routing.policy import Candidate, choose_routes, shade_weight
-from app.shade.model import ShadeDataUnavailable, load_model, build_shadow_field, model_coverage_status
+from app.shade.model import PROJECTION, ShadeDataUnavailable, load_model, build_shadow_field, model_coverage_status
+from shapely.geometry import MultiLineString
 from app.shade.scoring import RouteEdge, score_route
 from app.routing.directions import Leg, build_steps
 from app.api.schemas import RouteResponseItem, RouteSegment, LineString, Conditions, RoutesResponse
@@ -53,7 +54,16 @@ def build_routes(origin: tuple[float,float], destination: tuple[float,float], wh
         logger.warning("Shade dataset unavailable; returning unknown exposure: %s", exc)
         model=None
         shade_data_failed=True
-    field=build_shadow_field(model,when)
+    # the shade search only ever looks at walkways that fit inside max_duration,
+    # so the shadow field only has to be right along those (see
+    # build_shadow_field). the fastest path is always among them.
+    max_duration=min(fastest_duration*1.6,fastest_duration+720)
+    edge_refs=bounded_edge_refs(graph,source,target,max_duration,SPEED_MPS)
+    walkways=MultiLineString([[PROJECTION.transform(*c) for c in coords_for_edge(graph,*edge_ref)] for edge_ref in edge_refs])
+    # passing the lines rather than a buffer around them, because buffering a few
+    # thousand walkways took longer than the shadows it saved. only these edges
+    # are ever scored below, so that's all the field needs to be right about.
+    field=build_shadow_field(model,when,walkways if edge_refs else None)
     profiles={}
 
     def profile(edge_ref):
@@ -78,8 +88,6 @@ def build_routes(origin: tuple[float,float], destination: tuple[float,float], wh
         return score.sun_seconds is not None and score.unknown_seconds <= .01
     fastest_known=all(known(edge_ref) for edge_ref in fastest_path)
     if fastest_known and field.status=='daylight' and field.coverage_geometry is not None:
-        max_duration=min(fastest_duration*1.6,fastest_duration+720)
-        edge_refs=bounded_edge_refs(graph,source,target,max_duration,SPEED_MPS)
         costs={}
         for edge_ref in edge_refs:
             _,duration,_,score=profile(edge_ref)

@@ -309,3 +309,18 @@ def test_local_cli_accepts_tree_only_data(tmp_path, monkeypatch, capsys):
     result = json.loads(capsys.readouterr().out)
     assert result["shade_seconds"] > 0 and result["sun_seconds"] is None
     assert "synthetic tree fixture" in result["source"]
+
+
+def test_shadow_field_cut_to_an_area_matches_inside_it_and_claims_nothing_outside():
+    from datetime import timezone, timedelta
+    from app.shade.model import ShadeModel, build_shadow_field
+    from app.shade.trees import TreeCrown
+    # a row of trees from x=0 to x=2000 m; the area is a small box in the middle
+    trees = tuple(TreeCrown(Point(x, 0), 15.0, 4.0, f"t{x}") for x in range(0, 2001, 40))
+    model = ShadeModel((), None, True, box(-100, -100, 2100, 100), "fixture", trees)
+    when = datetime(2026, 10, 18, 13, 0, tzinfo=timezone(timedelta(hours=-7)))
+    area = box(900, -50, 1100, 50)
+    full, cut = build_shadow_field(model, when), build_shadow_field(model, when, area)
+    assert full.shadows.intersection(area).symmetric_difference(cut.shadows.intersection(area)).area < 1e-6
+    assert cut.coverage_geometry.equals(area)
+    assert cut.shadows.area < full.shadows.area / 3
